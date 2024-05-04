@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "NbyLP2MbGGyU8/qmp/vyX3nLl2UAy+4BR23SHSU5iJxTfu/E1EDw/3StzdIFZLH0/c67Lxgl6FUhPfGT2L0Rvg==",
+  "success": true,
+  "projectFilePath": "C:\\Tools\\Visual Studio\\Projects\\DockerWebAPI\\DockerWebAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\hidea\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\hidea\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\hidea\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\hidea\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\hidea\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\hidea\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
