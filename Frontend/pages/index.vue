@@ -1,7 +1,7 @@
 <template>
   <div class="NavBar">
     Your Containers
-    <div class="Profil"></div>
+    <div class="Profil" @click="navigateProfile()"></div>
   </div>
   <div class="CardGrid">
     <div class="Card" v-for="(item, index) in 50" @click="navigateDetails()">
@@ -126,6 +126,9 @@ export default {
   methods: {
     navigateDetails() {
       window.open("/Status", "_self")
+    },
+    navigateProfile() {
+      window.open("/Profile", "_self")
     }
   }
 }
