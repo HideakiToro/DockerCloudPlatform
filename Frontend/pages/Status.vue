@@ -1,8 +1,5 @@
 <template>
-    <div class="NavBar">
-        Container Info
-        <div class="Profil"></div>
-    </div>
+    <NavBar>Container Info</NavBar>
     <div class="StatusContainer">
         <div class="StatusName">The Container Name</div>
         <div class="StatusType">Intern</div>

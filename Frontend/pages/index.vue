@@ -1,8 +1,5 @@
 <template>
-  <div class="NavBar">
-    Your Containers
-    <div class="Profil"></div>
-  </div>
+  <NavBar>Your Containers</NavBar>
   <div class="CardGrid">
     <div class="Card" v-for="(item, index) in 50" @click="navigateDetails()">
       <div class="CardTitle">This is Container #{{ index }}</div>
