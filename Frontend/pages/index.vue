@@ -26,7 +26,7 @@
   padding-bottom: 22pt;
   margin-top: 12.5pt;
   margin-bottom: 12.5pt;
-  background-color: rgb(35, 35, 45);
+  background: radial-gradient(closest-side, rgb(65, 65, 75), rgb(35, 35, 45));
   border-radius: 10pt;
   text-align: center;
   border-bottom: solid 3pt rgb(155, 255, 170);
