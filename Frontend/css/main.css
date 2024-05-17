@@ -1,0 +1,11 @@
+body {
+    background-color: rgb(55, 55, 70);
+    color: rgb(155, 255, 170);
+    font-family: Roboto;
+    font-size: 16pt;
+    font-weight: 500;
+    z-index: 1;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}

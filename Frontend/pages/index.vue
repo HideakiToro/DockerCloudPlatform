@@ -10,54 +10,6 @@
 </template>
 
 <style>
-body {
-  background-color: rgb(55, 55, 70);
-  color: rgb(155, 255, 170);
-  font-family: Roboto;
-  font-size: 16pt;
-  font-weight: 500;
-  z-index: 1;
-  padding: 0;
-  margin: 0;
-  height: 100%;
-}
-
-.NavBar {
-  width: calc(100%-30pt);
-  height: 50pt;
-  align-content: center;
-  padding-left: 15pt;
-  padding-right: 15pt;
-  background-color: rgb(35, 35, 45);
-  z-index: 2;
-  border-bottom: solid 3pt rgb(155, 255, 170);
-  position: sticky;
-  top: 0;
-}
-
-.Profil {
-  position: absolute;
-  top:5pt;
-  right: 25pt;
-  width: 32pt;
-  height: 32pt;
-  border-radius: 20pt;
-  border: solid 3pt rgb(155, 255, 170);
-}
-
-.Profil:hover {
-  animation: hoverProfil 0.05s linear forwards;
-}
-
-@keyframes hoverProfil {
-  from {
-    background-color: transparent;
-  }
-  to {
-    background-color: rgb(155, 255, 170);
-  }
-}
-
 .CardGrid {
   width: 100%;
   height: 100%;
@@ -74,7 +26,7 @@ body {
   padding-bottom: 22pt;
   margin-top: 12.5pt;
   margin-bottom: 12.5pt;
-  background-color: rgb(35, 35, 45);
+  background: radial-gradient(closest-side, rgb(65, 65, 75), rgb(35, 35, 45));
   border-radius: 10pt;
   text-align: center;
   border-bottom: solid 3pt rgb(155, 255, 170);

@@ -22,7 +22,7 @@
 .StatusContainer {
     position: relative;
     margin: auto;
-    background-color: rgb(35, 35, 45);
+    background: radial-gradient(closest-side, rgb(65, 65, 75), rgb(35, 35, 45));
     min-width: 200pt;
     width: calc(50vw - 50pt);
     height: calc(100vh - 130pt);
@@ -63,7 +63,7 @@
     border-radius: 15pt;
     padding: 15pt;
     top: 100pt;
-    bottom: 25%;
+    bottom: 30%;
     left: 12.5%;
     right: 12.5%;
     background-color: rgb(35, 35, 35);
