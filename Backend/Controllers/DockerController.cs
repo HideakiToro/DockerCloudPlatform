@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace DockerWebAPI.Controllers
 {
@@ -14,7 +15,7 @@ namespace DockerWebAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetDocker")]
+        [HttpGet(Name = "GetContainers")]
         public IEnumerable<string> Get()
         {
             List<string> result = new List<string>();
@@ -44,20 +45,100 @@ namespace DockerWebAPI.Controllers
 
             process.Close();
             Console.WriteLine("Output is as follows:");
-            foreach(string s in result)
+            foreach (string s in result)
             {
                 Console.WriteLine(s);
             }
             return result.ToArray();
         }
 
-        [HttpPost(Name = "PostDocker")]
-        public string Post(string input)
+        public static int ports = 6000;
+        public static List<int> reopenedPorts = new List<int>();
+        public static Dictionary<string, int> containers = new Dictionary<string, int>();
+
+        [HttpPost(Name = "StartNewContainer")]
+        public async Task<dynamic> Post()
         {
-            switch (input)
+            string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
+            try
             {
-                case "mysql":
-                    var processInfo = new ProcessStartInfo("docker", $"run --name mysql-docker -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql");
+                var data = JsonSerializer.Deserialize<dynamic>(requestBody);
+                //return data;
+
+                string name = data?.GetProperty("name").GetString();
+                if (containers.ContainsKey(name))
+                {
+                    return "Name already used";
+                }
+                string image = data?.GetProperty("image").GetString();
+                string port = data?.GetProperty("port").GetString();
+                string commands = "";
+                try
+                {
+                    commands = data?.GetProperty("commands").GetString();
+                }
+                catch { }
+
+                int portToUse = 0;
+                if(reopenedPorts.Count > 0)
+                {
+                    portToUse = reopenedPorts[0];
+                    reopenedPorts.RemoveAt(0);
+                }
+                else
+                {
+                    portToUse = ports;
+                    ports++;
+                }
+
+                string startCommand = $"run --name {name} -p {portToUse}:{port}";
+                startCommand += commands.Length > 0 ? $" -e {commands}" : "";
+                startCommand += $" -d {image}";
+
+                var processInfo = new ProcessStartInfo("docker", startCommand);
+
+                processInfo.CreateNoWindow = true;
+                processInfo.UseShellExecute = false;
+                processInfo.RedirectStandardOutput = true;
+
+                var process = new Process();
+                process.StartInfo = processInfo;
+
+                process.Start();
+                Console.WriteLine("process started");
+                process.WaitForExit(1200000);
+                Console.WriteLine("process ended");
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
+                process.Close();
+
+                containers.Add(name, portToUse);
+
+                return $"started {image} container with name {name} on port {portToUse}";
+            }
+            catch (Exception ex)
+            {
+                return "Invalid JSON Error:" + ex.Message;
+            }
+        }
+
+        [HttpDelete(Name = "DeleteContainer")]
+        public async Task<dynamic> Delete()
+        {
+            string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
+            try
+            {
+                var data = JsonSerializer.Deserialize<dynamic>(requestBody);
+                //return data;
+
+                string name = data?.GetProperty("name").GetString();
+                if (containers.ContainsKey(name))
+                {
+                    //Get ID
+                    Console.WriteLine("deleting: " + name);
+                    var processInfo = new ProcessStartInfo("docker", $"ps -a -q --filter ancestor={name} --format=\"{{.ID}}\"");
 
                     processInfo.CreateNoWindow = true;
                     processInfo.UseShellExecute = false;
@@ -69,15 +150,82 @@ namespace DockerWebAPI.Controllers
                     process.Start();
                     Console.WriteLine("process started");
                     process.WaitForExit(1200000);
+                    string id = "";
+                    while (!process.StandardOutput.EndOfStream)
+                    {
+                        id = process.StandardOutput.ReadLine();
+                    }
                     Console.WriteLine("process ended");
                     if (!process.HasExited)
                     {
                         process.Kill();
                     }
                     process.Close();
-                    return "started mysql container";
-                default:
-                    return $"unknown image {input}!";
+
+                    //Stop Image
+                    Console.WriteLine("Stopping Container...");
+                    processInfo = new ProcessStartInfo("docker", $"stop {id}");
+
+                    processInfo.CreateNoWindow = true;
+                    processInfo.UseShellExecute = false;
+                    processInfo.RedirectStandardOutput = true;
+
+                    process = new Process();
+                    process.StartInfo = processInfo;
+
+                    process.Start();
+                    Console.WriteLine("process started");
+                    process.WaitForExit(1200000);
+                    while (!process.StandardOutput.EndOfStream)
+                    {
+                        Console.WriteLine(process.StandardOutput.ReadLine());
+                    }
+                    Console.WriteLine("process ended");
+                    if (!process.HasExited)
+                    {
+                        process.Kill();
+                    }
+                    process.Close();
+
+                    //Remove Image
+                    Console.WriteLine("Removing Container...");
+                    processInfo = new ProcessStartInfo("docker", $"rm {id}");
+
+                    processInfo.CreateNoWindow = true;
+                    processInfo.UseShellExecute = false;
+                    processInfo.RedirectStandardOutput = true;
+
+                    process = new Process();
+                    process.StartInfo = processInfo;
+
+                    process.Start();
+                    Console.WriteLine("process started");
+                    process.WaitForExit(1200000);
+                    while (!process.StandardOutput.EndOfStream)
+                    {
+                        Console.WriteLine(process.StandardOutput.ReadLine());
+                    }
+                    Console.WriteLine("process ended");
+                    if (!process.HasExited)
+                    {
+                        process.Kill();
+                    }
+                    process.Close();
+
+                    reopenedPorts.Add(containers[name]);
+                    containers.Remove(name);
+                    Console.WriteLine($"Container {name} removed");
+
+                    return "Container deleted";
+                }
+                else
+                {
+                    return "Container not found";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Couldn't delete container with error: " + ex.Message;
             }
         }
     }

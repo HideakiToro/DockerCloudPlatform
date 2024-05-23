@@ -1,10 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Tools\\Visual Studio\\Projects\\Backend\\",
+  "WorkspaceRootPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|c:\\tools\\visual studio\\projects\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|c:\\tools\\git projects\\dockercloudplatform\\backend\\controllers\\dockercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|solutionrelative:controllers\\dockercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,14 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Tools\\Visual Studio\\Projects\\Backend\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Tools\\Visual Studio\\Projects\\Backend\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAaAAAA",
+              "Title": "DockerController.cs",
+              "DocumentMoniker": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\Controllers\\DockerController.cs",
+              "RelativeDocumentMoniker": "Controllers\\DockerController.cs",
+              "ToolTip": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\Controllers\\DockerController.cs",
+              "RelativeToolTip": "Controllers\\DockerController.cs",
+              "ViewState": "AQIAAMUAAAAAAAAAAAAkwNgAAAAnAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-19T10:09:34.338Z",
+              "WhenOpened": "2024-05-23T05:38:20.133Z",
               "EditorCaption": ""
             }
           ]
