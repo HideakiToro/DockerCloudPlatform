@@ -116,11 +116,11 @@ namespace DockerWebAPI.Controllers
 
                 containers.Add(name, portToUse);
 
-                return $"started {image} container with name {name} on port {portToUse}";
+                return Ok(new { status = "started", image = image, name = name, port = portToUse });
             }
             catch (Exception ex)
             {
-                return "Invalid JSON Error:" + ex.Message;
+                return BadRequest(new { status = "error", error = ex.Message });
             }
         }
 
@@ -216,16 +216,16 @@ namespace DockerWebAPI.Controllers
                     containers.Remove(name);
                     Console.WriteLine($"Container {name} removed");
 
-                    return "Container deleted";
+                    return Ok(new { status = "deleted" });
                 }
                 else
                 {
-                    return "Container not found";
+                    return NotFound(new { status = "Not Found" });
                 }
             }
             catch (Exception ex)
             {
-                return $"Couldn't delete container with error: " + ex.Message;
+                return StatusCode(500, new { status = "error", error = ex.Message });
             }
         }
     }
