@@ -4,6 +4,11 @@ export default defineEventHandler(async (event) => {
         let res = await $fetch("http://localhost:5173/api/Docker", {
             method: "POST",
             body: body
+        }).catch(e => {
+            return new Response(JSON.stringify(e), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            });
         });
         return new Response(JSON.stringify(res), {
             status: 200,

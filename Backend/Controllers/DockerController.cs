@@ -68,7 +68,7 @@ namespace DockerWebAPI.Controllers
                 string name = data?.GetProperty("name").GetString();
                 if (containers.ContainsKey(name))
                 {
-                    return "Name already used";
+                    return BadRequest(new { status = "error", error = "Name already in use" });
                 }
                 string image = data?.GetProperty("image").GetString();
                 string port = data?.GetProperty("port").GetString();
@@ -111,6 +111,17 @@ namespace DockerWebAPI.Controllers
                 if (!process.HasExited)
                 {
                     process.Kill();
+                }
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    if (process.StandardOutput.ReadLine().Contains("docker: Error response from daemon: Conflict. The container name"))
+                    {
+                        return BadRequest(new { status = "error", error = "Name already in use" });
+                    }
+                    else if(process.StandardOutput.ReadLine().Contains("error during connect:"))
+                    {
+                        return StatusCode(500, new { status = "error", error = "Docker not running on Server" });
+                    }
                 }
                 process.Close();
 
