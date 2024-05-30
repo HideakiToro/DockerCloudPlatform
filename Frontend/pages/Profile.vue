@@ -2,7 +2,7 @@
   <NavBar>Your Profile</NavBar>
   <div>
     <div>
-      User
+      {{Username}}
     </div>
     <button class="deleteActionBtn" @click="toggleDelete(true)">
       Delete Account
@@ -25,7 +25,8 @@
   export default{
     data(){
       return{
-        showDelete:false
+        showDelete:false,
+        Username:Math.random()>0.5?"Jan Schneiders":"jflöaksdjfkasdjölfjadsklfasödghaslöjghölfsajgksaföjgöklasfjgklfajgösdfjgklsdfhghdsfklöghjsdfökghsdfjklghlsdfkjhgösdfhgöhsdfljökghsdg"  
       }
     },
     methods:{
@@ -37,6 +38,20 @@
 </script>
 
 <style scoped>
+
+  .StatusContainer {
+      position: relative;
+      margin: auto;
+      background: radial-gradient(closest-side, rgb(65, 65, 75), rgb(35, 35, 45));
+      min-width: 200pt;
+      width: calc(50vw - 50pt);
+      height: calc(100vh - 130pt);
+      margin-top: 15pt;
+      border-radius: 15pt;
+      padding: 25pt;
+      justify-content: center;
+  }
+
   .deleteActionBtn{
     width: 194pt;
     height: 34pt;
