@@ -1,10 +1,20 @@
 <template>
-  <NavBar>Your Containers</NavBar>
+  <NavBar>
+    Your Containers
+    <div class="AddContainer" @click="toggleAddContainer(true)">
+      +
+    </div>
+  </NavBar>
   <div class="CardGrid">
     <div class="Card" v-for="(item, index) in 50" @click="navigateDetails()">
       <div class="CardTitle">This is Container #{{ index }}</div>
       <div v-if="Math.random() > 0.8" class="CardStatus"></div>
       <div v-else class="CardStatus OkStatus"></div>
+    </div>
+  </div>
+  <div class="addBackground" v-if="showCount">
+    <div class="addContWindow">
+      hello World
     </div>
   </div>
 </template>
@@ -42,6 +52,7 @@
     border-bottom: solid 3pt rgb(155, 255, 170);
     padding-bottom: 22pt;
   }
+
   to {
     border-bottom: solid 15pt rgb(155, 255, 170);
     padding-bottom: 10pt;
@@ -68,13 +79,67 @@
 .OkStatus {
   background-color: rgb(70, 255, 110);
 }
+
+.AddContainer {
+  position: absolute;
+  top: 5pt;
+  right: 75pt;
+  width: 32pt;
+  height: 32pt;
+  border-radius: 20pt;
+  border: solid 3pt rgb(155, 255, 170);
+  font-size: 27pt;
+  text-align: center;
+  align-items: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.AddContainer:hover {
+  animation: hoverProfil 0.05s linear forwards;
+  color: rgb(35, 35, 45);
+  font-weight: 1000;
+}
+
+.addBackground {
+  background-color: rgb(0, 0, 0, 0.5);
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+
+.addContWindow {
+  width: 400pt;
+  height: 300pt;
+  position: fixed;
+  top: calc(50% - 150pt);
+  left: calc(50% - 200pt);
+  background-color: rgb(35, 35, 45);
+  align-content: center;
+  text-align: center;
+  border-radius: 25pt;
+}
 </style>
 
 <script>
 export default {
+  data() {
+    return {
+      showCount: false,
+    }
+  }
   methods: {
     navigateDetails() {
       window.open("/Status", "_self")
+    },
+    toggleAddContainer(show) {
+      this.showCount = show
     }
   }
 }
