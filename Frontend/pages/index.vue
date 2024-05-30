@@ -133,7 +133,7 @@ export default {
     return {
       showCount: false,
     }
-  }
+  },
   methods: {
     navigateDetails() {
       window.open("/Status", "_self")
