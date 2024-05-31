@@ -20,7 +20,7 @@ namespace DockerWebAPI.Controllers
         {
             List<string> result = new List<string>();
 
-            var processInfo = new ProcessStartInfo("docker", $"ps -a");
+            var processInfo = new ProcessStartInfo("docker", "ps -a --format \"{{.Names}}\"");
 
             processInfo.CreateNoWindow = true;
             processInfo.UseShellExecute = false;
@@ -56,6 +56,15 @@ namespace DockerWebAPI.Controllers
         public static List<int> reopenedPorts = new List<int>();
         public static Dictionary<string, int> containers = new Dictionary<string, int>();
 
+        /*
+         * POST /api/Docker
+         * {
+         *    name: "",
+         *    image: "",
+         *    port: 0,
+         *    command(optional): ""
+         * }
+         */
         [HttpPost(Name = "StartNewContainer")]
         public async Task<dynamic> Post()
         {
@@ -63,7 +72,6 @@ namespace DockerWebAPI.Controllers
             try
             {
                 var data = JsonSerializer.Deserialize<dynamic>(requestBody);
-                //return data;
 
                 string name = data?.GetProperty("name").GetString();
                 if (containers.ContainsKey(name))
@@ -135,6 +143,12 @@ namespace DockerWebAPI.Controllers
             }
         }
 
+        /*
+         * DELETE /api/Docker
+         * {
+         *    name: ""
+         * }
+         */
         [HttpDelete(Name = "DeleteContainer")]
         public async Task<dynamic> Delete()
         {
