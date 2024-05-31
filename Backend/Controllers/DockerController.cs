@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DockerWebAPI.Controllers
 {
