@@ -1,7 +1,7 @@
 <template>
     <NavBar>Container Info</NavBar>
     <div class="StatusContainer">
-        <div class="StatusName">The Container Name</div>
+        <div class="StatusName">{{ name }}</div>
         <div class="StatusType">Intern</div>
         <div class="StatusStatus"></div>
         <div class="StatusLogs">
@@ -12,11 +12,22 @@
         </div>
         <div class="StatusInfo">
             <div class="StatusInfoTitle">Connection</div>
-            IP: 127.0.0.1:4000<br>
-            URL: 127.0.0.1:3000/pods?id=15
+            <div v-if="connectedByPort">IP: 127.0.0.1:4000</div>
+            <div v-else>URL: 127.0.0.1:3000/pods?id=15</div>
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            name: this.$route.query.name,
+            connectedByPort: true
+        }
+    }
+}
+</script>
 
 <style>
 .StatusContainer {

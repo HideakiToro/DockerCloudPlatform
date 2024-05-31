@@ -6,7 +6,7 @@
     </div>
   </NavBar>
   <div class="CardGrid">
-    <div class="Card" v-for="(container, index) in containers" @click="navigateDetails()">
+    <div class="Card" v-for="(container, index) in containers" @click="navigateDetails(container)">
       <div class="CardTitle">{{ container }}</div>
       <div v-if="Math.random() > 0.8" class="CardStatus"></div>
       <div v-else class="CardStatus OkStatus"></div>
@@ -144,8 +144,8 @@ export default {
     })
   },
   methods: {
-    navigateDetails() {
-      window.open("/Status", "_self")
+    navigateDetails(name) {
+      window.open("/Status?name=" + name, "_self")
     },
     toggleAddContainer(show) {
       this.showCount = show
