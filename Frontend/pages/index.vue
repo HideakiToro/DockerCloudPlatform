@@ -6,8 +6,8 @@
     </div>
   </NavBar>
   <div class="CardGrid">
-    <div class="Card" v-for="(item, index) in 50" @click="navigateDetails()">
-      <div class="CardTitle">This is Container #{{ index }}</div>
+    <div class="Card" v-for="(container, index) in containers" @click="navigateDetails()">
+      <div class="CardTitle">{{ container }}</div>
       <div v-if="Math.random() > 0.8" class="CardStatus"></div>
       <div v-else class="CardStatus OkStatus"></div>
     </div>
@@ -132,7 +132,16 @@ export default {
   data() {
     return {
       showCount: false,
+      containers: []
     }
+  },
+  mounted() {
+    $fetch("/api/Docker").then(res => {
+      this.containers = res;
+    }).catch(e => {
+      console.log(e);
+      this.containers = [];
+    })
   },
   methods: {
     navigateDetails() {
