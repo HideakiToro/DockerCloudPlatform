@@ -16,21 +16,22 @@ namespace DockerWebAPI.Controllers
         }
 
         [HttpGet(Name = "GetContainers")]
-        public async Task<dynamic> Get()
+        public async Task<dynamic> Get(string? name = null)
         {
-            try
+            if (name != null)
             {
-                string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                var data = JsonSerializer.Deserialize<dynamic>(requestBody);
-                string name = data?.GetProperty("name").GetString();
-
-                string status = executeCommand("ps --format \"{{.Status}}\" --filter \"name=" + name + "\"")[0].Split(' ')[0];
+                string[] statusStringArr = executeCommand("ps --format \"{{.Status}}\" --filter \"name=" + name + "\"");
+                string status = "Exited";
+                if(statusStringArr.Length > 0)
+                {
+                    status = statusStringArr[0].Contains("(Paused)") ? "Paused" : "Up";
+                }
                 string[] logs = executeCommand("logs " + name);
                 int port = containers[name];
 
                 return Ok(new { status = status, logs = logs, port = port });
             }
-            catch
+            else
             {
                 return executeCommand("ps -a --format \"{{.Names}}\"");
             }

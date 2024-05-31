@@ -3,16 +3,17 @@
     <div class="StatusContainer">
         <div class="StatusName">{{ name }}</div>
         <div class="StatusType">Intern</div>
-        <div class="StatusStatus"></div>
+        <div v-if="info.status == 'Up'" class="StatusStatus"></div>
+        <div v-else-if="info.status == 'Exited'" class="StatusStatus StatusRed"></div>
+        <div v-else class="StatusStatus StatusYellow"></div>
         <div class="StatusLogs">
-            <div v-for="(item, index) in 59">
-                <div v-if="Math.random() > 0.2">[05/05/2024 01:25:{{ item }}] Server 1: No Issues detected.</div>
-                <div v-else>[05/05/2024 01:25:{{ item }}] Server 1: Some Issues detected that might require human intervention.</div>
+            <div v-for="(item, index) in info.logs">
+                <div>{{ item }}</div>
             </div>
         </div>
         <div class="StatusInfo">
             <div class="StatusInfoTitle">Connection</div>
-            <div v-if="connectedByPort">IP: 127.0.0.1:4000</div>
+            <div v-if="connectedByPort">IP: 127.0.0.1:{{ info.port }}</div>
             <div v-else>URL: 127.0.0.1:3000/pods?id=15</div>
         </div>
     </div>
@@ -23,8 +24,21 @@ export default {
     data() {
         return {
             name: this.$route.query.name,
-            connectedByPort: true
+            connectedByPort: true,
+            info: {
+                status: "Pending",
+                logs: [],
+                port: -1
+            }
         }
+    },
+    mounted() {
+        $fetch("/api/Docker?name=" + this.name).then(res => {
+            this.info = res;
+        }).catch(e => {
+            this.info.status = "Exited"
+            this.info.logs.push(e);
+        })
     }
 }
 </script>
@@ -64,6 +78,14 @@ export default {
     height: 50pt;
     background-color: rgb(70, 255, 110);
     border-radius: 25pt;
+}
+
+.StatusYellow {
+    background-color: yellow;
+}
+
+.StatusRed {
+    background-color: rgb(255,70,70);
 }
 
 .StatusLogs {

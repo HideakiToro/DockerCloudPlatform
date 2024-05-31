@@ -1,11 +1,9 @@
 export default defineEventHandler(async (event) => {
     try {
         try{
-            let body = await readBody(event);
-            if(body != null){
-                let content = await fetch("http://localhost:5173/api/Docker", {
-                    body: body
-                });
+            let query = await getQuery(event);
+            if(query != null){
+                let content = await fetch("http://localhost:5173/api/Docker?name=" + query.name);
                 return new Response(JSON.stringify(await content.json()), {
                     status: 200,
                     headers: { 'Content-Type': 'application/json' },
