@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Tools\\Visual Studio\\Projects\\DockerWebAPI\\DockerWebAPI.csproj": {}
+    "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Tools\\Visual Studio\\Projects\\DockerWebAPI\\DockerWebAPI.csproj": {
+    "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Tools\\Visual Studio\\Projects\\DockerWebAPI\\DockerWebAPI.csproj",
+        "projectUniqueName": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
         "projectName": "DockerWebAPI",
-        "projectPath": "C:\\Tools\\Visual Studio\\Projects\\DockerWebAPI\\DockerWebAPI.csproj",
+        "projectPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
         "packagesPath": "C:\\Users\\hidea\\.nuget\\packages\\",
-        "outputPath": "C:\\Tools\\Visual Studio\\Projects\\DockerWebAPI\\obj\\",
+        "outputPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\hidea\\AppData\\Roaming\\NuGet\\NuGet.Config",
