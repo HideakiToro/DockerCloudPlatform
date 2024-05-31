@@ -5,7 +5,10 @@
       +
     </div>
   </NavBar>
-  <div class="CardGrid">
+  <div v-if="backendUnavailable" class="Error">
+    The Server isn't available right now.
+  </div>
+  <div class="CardGrid" v-if="noError">
     <div class="Card" v-for="(container, index) in containers" @click="navigateDetails(container)">
       <div class="CardTitle">{{ container }}</div>
       <div v-if="Math.random() > 0.8" class="CardStatus"></div>
@@ -19,7 +22,16 @@
   </div>
 </template>
 
-<style>
+<style scoped>
+.Error {
+  margin-top: 25pt;
+  text-align: center;
+  align-items: center;
+  font-size: 40pt;
+  font-weight: 1000;
+  color: rgb(255, 70, 70);
+}
+
 .CardGrid {
   width: 100%;
   height: 100%;
@@ -132,15 +144,22 @@ export default {
   data() {
     return {
       showCount: false,
-      containers: []
+      containers: [],
+      backendUnavailable: false
     }
   },
   mounted() {
+    this.resetErrors();
     $fetch("/api/Docker").then(res => {
       this.containers = res;
     }).catch(e => {
       console.log(e);
       this.containers = [];
+      switch(e.response.status) {
+        case 503:
+          this.backendUnavailable = true;
+          break;
+      }
     })
   },
   methods: {
@@ -149,6 +168,12 @@ export default {
     },
     toggleAddContainer(show) {
       this.showCount = show
+    },
+    resetErrors() {
+      this.backendUnavailable = false;
+    },
+    noError() {
+      return !this.backendUnavailable;
     }
   }
 }
