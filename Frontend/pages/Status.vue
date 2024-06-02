@@ -1,5 +1,10 @@
 <template>
-    <NavBar>Container Info</NavBar>
+    <NavBar>
+        Container Info
+        <div class="removeCont" @click="toggleRemoveContainer(true)">
+            -
+        </div>
+    </NavBar>
     <div class="StatusContainer">
         <div class="StatusName">{{ name }}</div>
         <div class="StatusType">Intern</div>
@@ -16,6 +21,25 @@
             <div v-if="connectedByPort">IP: 127.0.0.1:{{ info.port }}</div>
             <div v-else>URL: 127.0.0.1:3000/pods?id=15</div>
         </div>
+
+    </div>
+    <div class="removeBackground" v-if="showRemoveCont">
+        <div class="removeContWindow">
+            <div v-if="!isLoading">
+                <div>
+                    Do you really want to delete the Container?
+                </div>
+                <button class="cancelRemBtn" @click="toggleRemoveContainer(false)">
+                    Cancel
+                </button>
+                <button class="confirmRemBtn" @click="console.log('Removed Container'); removeCont()">
+                    Remove
+                </button>
+            </div>
+            <div v-else>
+                Container is being deleted...
+            </div>
+        </div>
     </div>
 </template>
 
@@ -23,6 +47,8 @@
 export default {
     data() {
         return {
+            showRemoveCont: false,
+            isLoading: false,
             name: this.$route.query.name,
             connectedByPort: true,
             info: {
@@ -39,11 +65,120 @@ export default {
             this.info.status = "Exited"
             this.info.logs.push(e);
         })
+    },
+    methods: {
+        toggleRemoveContainer(show) {
+            this.showRemoveCont = show
+        },
+        removeCont() {
+            this.isLoading = true
+            $fetch("/api/Docker", {
+                method: "DELETE",
+                body: {
+                    name: this.name
+                }
+            }).then(res => {
+                if (res.status != undefined) {
+                    navigateTo("/")
+                } else {
+                    this.isLoading = false
+                }
+                //navigateTo("/status?name=" + this.name)
+            }).catch(e => {
+                this.isLoading = false
+                console.log(e)
+            })
+        }
     }
 }
 </script>
 
 <style>
+.removeBackground {
+    background-color: rgb(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
+.removeContWindow {
+    width: 400pt;
+    height: 300pt;
+    position: fixed;
+    top: calc(50% - 150pt);
+    left: calc(50% - 200pt);
+    background-color: rgb(35, 35, 45);
+    align-content: center;
+    text-align: center;
+    border-radius: 25pt;
+}
+
+.removeCont {
+    position: absolute;
+    top: 5pt;
+    right: 75pt;
+    width: 32pt;
+    height: 32pt;
+    border-radius: 20pt;
+    border: solid 3pt rgb(155, 255, 170);
+    font-size: 27pt;
+    text-align: center;
+    align-items: center;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.removeCont:hover {
+    animation: hoverProfil 0.05s linear forwards;
+    color: rgb(35, 35, 45);
+    font-weight: 1000;
+}
+
+.confirmRemBtn {
+    width: 144pt;
+    height: 34pt;
+    border-radius: 20pt;
+    border: solid 3pt rgb(155, 255, 170);
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+    margin-left: 25pt;
+    margin-right: 25pt;
+    margin-top: 25pt;
+}
+
+.confirmRemBtn:hover {
+    background-color: rgb(155, 255, 170);
+    color: black;
+}
+
+.cancelRemBtn {
+    width: 144pt;
+    height: 34pt;
+    border-radius: 20pt;
+    border: solid 3pt rgb(255, 70, 70);
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+    margin-left: 25pt;
+    margin-right: 25pt;
+    margin-top: 25pt;
+}
+
+.cancelRemBtn:hover {
+    background-color: rgb(255, 70, 70);
+}
+
 .StatusContainer {
     position: relative;
     margin: auto;
@@ -85,7 +220,7 @@ export default {
 }
 
 .StatusRed {
-    background-color: rgb(255,70,70);
+    background-color: rgb(255, 70, 70);
 }
 
 .StatusLogs {

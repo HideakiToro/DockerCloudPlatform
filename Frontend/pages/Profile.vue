@@ -1,5 +1,5 @@
 <template>
-  <NavBar>Your Profile</NavBar>
+  <NavBar showProfile = true>Your Profile</NavBar>
   <div class="StatusContainer">
     <div class="userName">
       {{ Username }}

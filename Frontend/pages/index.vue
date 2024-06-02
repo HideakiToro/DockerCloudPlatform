@@ -1,5 +1,5 @@
 <template>
-  <NavBar>
+  <NavBar showHome=true>
     Your Containers
     <div class="AddContainer" @click="toggleAddContainer(true)">
       +
@@ -17,18 +17,25 @@
   </div>
   <div class="addBackground" v-if="showCount">
     <div class="addContWindow">
+      <div v-if="!isLoading">
+        <div class="addContainer"><input type="text" placeholder="Enter docker image..." v-model="image" /></div>
+        <div class="addContainer"><input type="text" placeholder="Enter container name..." v-model="name" /></div>
+        <div class="addContainer"><input type="number" placeholder="Enter port number..." v-model="port" /></div>
+        <div class="addContainer"><input type="text" placeholder="Enter command..." v-model="cmd" /></div>
 
-      <div class="addContainer"><input type="text" placeholder="Enter docker image..." v-model="image" /></div>
-      <div class="addContainer"><input type="text" placeholder="Enter container name..." v-model="name" /></div>
-      <div class="addContainer"><input type="number" placeholder="Enter port number..." v-model="port" /></div>
-      <div class="addContainer"><input type="text" placeholder="Enter command..." v-model="cmd" /></div>
-
-      <button class="cancelContBtn" @click="toggleAddContainer(false)">
-        Cancel
-      </button>
-      <button class="confirmContBtn" @click="console.log('Confirmed Deletion'); checkInput()">
-        Add Container
-      </button>
+        <button class="cancelContBtn" @click="toggleAddContainer(false)">
+          Cancel
+        </button>
+        <button class="confirmContBtn" @click="console.log('Added Container'); checkInput()">
+          Add Container
+        </button>
+      </div>
+      <div v-else>
+        Container is starting...
+      </div>
+    </div>
+    <div v-if="showInputErr" class="InputErr">
+      Something is wrong. Please check your input!
     </div>
   </div>
 </template>
@@ -202,6 +209,14 @@ input {
   padding-left: 10pt;
   padding-right: 10pt;
 }
+
+.InputErr {
+  color: rgb(255, 70, 70);
+  position: fixed;
+  bottom: 35pt;
+  width: 100%;
+  text-align: center;
+}
 </style>
 
 <script>
@@ -216,7 +231,9 @@ export default {
       name: "",
       port: null,
       cmd: "",
-      showInputErr: false
+      showInputErr: false,
+
+      isLoading: false
     }
   },
   mounted() {
@@ -253,9 +270,12 @@ export default {
     checkInput() {
       if (this.port >= 0 && this.name != "" && this.image != "") {
         this.addContainer()
+      } else {
+        this.showInputErr = true
       }
     },
     addContainer() {
+      this.isLoading = true
       let body = this.cmd != "" ? {
         "name": this.name,
         "image": this.image,
@@ -270,8 +290,16 @@ export default {
         method: "POST",
         body: body
       }).then(res => {
-        navigateTo("/status?name=" + this.name)
+        if (res.status != undefined) {
+          navigateTo("/status?name=" + this.name)
+        } else {
+          this.isLoading = false
+          this.showInputErr = true
+        }
+        //navigateTo("/status?name=" + this.name)
       }).catch(e => {
+        this.isLoading = false
+        this.showInputErr = true
         console.log(e)
       })
     }
