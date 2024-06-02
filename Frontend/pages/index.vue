@@ -18,15 +18,15 @@
   <div class="addBackground" v-if="showCount">
     <div class="addContWindow">
 
-      <div class="addContainer"><input type="text" placeholder="Enter docker image..."  v-model="image"/></div>
-      <div class="addContainer"><input type="text" placeholder="Enter image name..." v-model="name"/></div>     
-      <div class="addContainer"><input type="number" placeholder="Enter port number..."  v-model="port"/></div>
-      <div class="addContainer"><input type="text" placeholder="Enter command if you want..." v-model="cmd"/></div>
+      <div class="addContainer"><input type="text" placeholder="Enter docker image..." v-model="image" /></div>
+      <div class="addContainer"><input type="text" placeholder="Enter container name..." v-model="name" /></div>
+      <div class="addContainer"><input type="number" placeholder="Enter port number..." v-model="port" /></div>
+      <div class="addContainer"><input type="text" placeholder="Enter command..." v-model="cmd" /></div>
 
       <button class="cancelContBtn" @click="toggleAddContainer(false)">
         Cancel
       </button>
-      <button class="confirmContBtn" @click="console.log('Confirmed Deletion'); toggleAddContainer(false)">
+      <button class="confirmContBtn" @click="console.log('Confirmed Deletion'); checkInput()">
         Add Container
       </button>
     </div>
@@ -148,6 +148,7 @@
   text-align: center;
   border-radius: 25pt;
 }
+
 .confirmContBtn {
   width: 144pt;
   height: 34pt;
@@ -187,7 +188,7 @@
   background-color: rgb(255, 70, 70);
 }
 
-input{
+input {
   width: 194pt;
   height: 34pt;
   border-radius: 20pt;
@@ -225,7 +226,7 @@ export default {
     }).catch(e => {
       console.log(e);
       this.containers = [];
-      switch(e.response.status) {
+      switch (e.response.status) {
         case 503:
           this.backendUnavailable = true;
           break;
@@ -249,10 +250,30 @@ export default {
     noError() {
       return !this.backendUnavailable;
     },
-    checkInput(){
-      if(this.port >= 0 && this.name != "" && this.image != ""){
-        this.toggleAddContainer(false)
+    checkInput() {
+      if (this.port >= 0 && this.name != "" && this.image != "") {
+        this.addContainer()
       }
+    },
+    addContainer() {
+      let body = this.cmd != "" ? {
+        "name": this.name,
+        "image": this.image,
+        "port": "" + this.port,
+        "commands": this.cmd
+      } : {
+        "name": this.name,
+        "image": this.image,
+        "port": "" + this.port
+      }
+      $fetch("/api/Docker", {
+        method: "POST",
+        body: body
+      }).then(res => {
+        navigateTo("/status?name=" + this.name)
+      }).catch(e => {
+        console.log(e)
+      })
     }
   }
 }
