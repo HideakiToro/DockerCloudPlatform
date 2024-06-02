@@ -17,7 +17,18 @@
   </div>
   <div class="addBackground" v-if="showCount">
     <div class="addContWindow">
-      hello World
+
+      <div class="addContainer"><input type="text" placeholder="Enter docker image..."  v-model="image"/></div>
+      <div class="addContainer"><input type="text" placeholder="Enter image name..." v-model="name"/></div>     
+      <div class="addContainer"><input type="number" placeholder="Enter port number..."  v-model="port"/></div>
+      <div class="addContainer"><input type="text" placeholder="Enter command if you want..." v-model="cmd"/></div>
+
+      <button class="cancelContBtn" @click="toggleAddContainer(false)">
+        Cancel
+      </button>
+      <button class="confirmContBtn" @click="console.log('Confirmed Deletion'); toggleAddContainer(false)">
+        Add Container
+      </button>
     </div>
   </div>
 </template>
@@ -137,6 +148,59 @@
   text-align: center;
   border-radius: 25pt;
 }
+.confirmContBtn {
+  width: 144pt;
+  height: 34pt;
+  border-radius: 20pt;
+  border: solid 3pt rgb(155, 255, 170);
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  font-weight: inherit;
+  margin-left: 25pt;
+  margin-right: 25pt;
+  margin-top: 25pt;
+}
+
+.confirmContBtn:hover {
+  background-color: rgb(155, 255, 170);
+  color: black;
+}
+
+.cancelContBtn {
+  width: 144pt;
+  height: 34pt;
+  border-radius: 20pt;
+  border: solid 3pt rgb(255, 70, 70);
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  font-weight: inherit;
+  margin-left: 25pt;
+  margin-right: 25pt;
+  margin-top: 25pt;
+}
+
+.cancelContBtn:hover {
+  background-color: rgb(255, 70, 70);
+}
+
+input{
+  width: 194pt;
+  height: 34pt;
+  border-radius: 20pt;
+  border: solid 3pt rgb(155, 255, 170);
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  font-weight: inherit;
+  margin-top: 10pt;
+  padding-left: 10pt;
+  padding-right: 10pt;
+}
 </style>
 
 <script>
@@ -145,7 +209,13 @@ export default {
     return {
       showCount: false,
       containers: [],
-      backendUnavailable: false
+      backendUnavailable: false,
+
+      image: "",
+      name: "",
+      port: null,
+      cmd: "",
+      showInputErr: false
     }
   },
   mounted() {
@@ -168,12 +238,21 @@ export default {
     },
     toggleAddContainer(show) {
       this.showCount = show
+      this.image = ""
+      this.name = ""
+      this.port = null
+      this.showInputErr = false
     },
     resetErrors() {
       this.backendUnavailable = false;
     },
     noError() {
       return !this.backendUnavailable;
+    },
+    checkInput(){
+      if(this.port >= 0 && this.name != "" && this.image != ""){
+        this.toggleAddContainer(false)
+      }
     }
   }
 }
