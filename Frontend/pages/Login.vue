@@ -9,11 +9,14 @@
         <div class="InputCon">
             <input type="password" placeholder="Enter Password" v-model="password">
         </div>
-        <div class="LoginButton" @click="navigateTo('/')">
+        <div class="LoginButton" @click=checkLogin()>
             Login
         </div>
         <div class="RegisterButton" @click="navigateTo('/Register')">
             Register
+        </div>
+        <div v-if="showLoginError" class="LoginError">
+            Username or Password incorrect!
         </div>
     </div>
 </template>
@@ -70,6 +73,7 @@ input {
     padding-left: 10pt;
     padding-right: 10pt;
 }
+
 .RegisterButton {
     width: 194pt;
     height: 34pt;
@@ -90,9 +94,35 @@ input {
     background-color: rgb(155, 255, 170);
     color: rgb(35, 35, 45);
 }
-.Title{
+
+.Title {
     font-size: 40pt;
     font-weight: 1000;
     margin-bottom: 40pt;
 }
+.LoginError{
+    color: rgb(255, 70, 70);
+    margin-top: 25pt;
+}
 </style>
+<script>
+export default {
+    data() {
+        return {
+            username: "",
+            password: "",
+            showLoginError: false
+        }
+    },
+    methods: {
+        checkLogin() {
+            if (this.username != "" && this.password != "") {
+                navigateTo('/')
+            }
+            else {
+                this.showLoginError = true
+            }
+        }
+    }
+} 
+</script>
