@@ -9,10 +9,10 @@
     The Server isn't available right now.
   </div>
   <div class="CardGrid" v-if="noError">
-    <div class="Card" v-for="(container, index) in containers" @click="navigateDetails(container)">
-      <div class="CardTitle">{{ container }}</div>
-      <div v-if="Math.random() > 0.8" class="CardStatus"></div>
-      <div v-else class="CardStatus OkStatus"></div>
+    <div class="Card" v-for="(container, index) in containers" @click="navigateDetails(container.name)">
+      <div class="CardTitle">{{ container.name }}</div>
+      <div v-if="container.status == 'Up'" class="CardStatus OkStatus"></div>
+      <div v-else class="CardStatus"></div>
     </div>
   </div>
   <div class="addBackground" v-if="showCount">

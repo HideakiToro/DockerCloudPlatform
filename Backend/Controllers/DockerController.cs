@@ -33,7 +33,18 @@ namespace DockerWebAPI.Controllers
             }
             else
             {
-                return executeCommand("ps -a --format \"{{.Names}}\"");
+                string[] res = executeCommand("ps -a --format \"{{.Names}} {{.Status}}\"");
+                List<object> containers = new List<object>();
+                foreach (string s in res)
+                {
+                    string[] parts = s.Split(' ');
+                    string containerName = parts[0];
+                    string containerStatus = parts[1];
+
+                    var container = new {name = containerName, status = containerStatus};
+                    containers.Add(container);
+                }
+                return containers;
             }
         }
 
