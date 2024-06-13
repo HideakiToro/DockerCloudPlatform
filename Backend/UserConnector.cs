@@ -11,7 +11,14 @@ public class UserConnector
         try
         {
             conn.Open();
-            SendCommand("CREATE TABLE Users (id int NOT NULL AUTO_INCREMENT, name varchar(255), password varchar(255), PRIMARY KEY(id));");
+
+            try
+            {
+                SendCommand("CREATE TABLE Users (id int NOT NULL AUTO_INCREMENT, name varchar(255), password varchar(255), PRIMARY KEY(id));");
+            }
+            catch { }
+
+            Console.WriteLine("Table Users now usable.");
         }
         catch (Exception e)
         {
@@ -21,12 +28,11 @@ public class UserConnector
 
     public static bool isOk()
     {
-        return conn != null;
+        return conn != null && conn.Ping();
     }
 
-    public static MySqlDataReader SendCommand(string command)
+    public static string[] SendCommand(string command)
     {
-        Console.WriteLine($"\n----- {command.Split(';')[0]} -----\n");
         try
         {
             string sql = command;
@@ -34,12 +40,31 @@ public class UserConnector
 
             using var reader = cmd.ExecuteReader();
 
-            return reader;
+            List<string> result = new List<string>();
+
+            while (reader.Read())
+            {
+                string line = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    switch (reader.GetDataTypeName(i))
+                    {
+                        case "INT":
+                            line += reader.GetUInt32(i) + ",";
+                            break;
+                        case "VARCHAR":
+                            line += reader.GetString(i) + ",";
+                            break;
+                    }
+                }
+                result.Add(line);
+            }
+
+            return result.ToArray();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
-            return null;
+            return [];
         }
     }
 }

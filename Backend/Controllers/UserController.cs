@@ -34,7 +34,7 @@ namespace DockerWebAPI.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new { status = "error", error = "Name already in use" });
+                return StatusCode(500, new { status = "error", error = e.Message.ToString() });
             }
         }
     }

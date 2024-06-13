@@ -1,53 +1,12 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|c:\\users\\jan\\onedrive\\dokumente\\github\\dockercloudplatform\\backend\\controllers\\dockercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|solutionrelative:controllers\\dockercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|c:\\users\\jan\\onedrive\\dokumente\\github\\dockercloudplatform\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6C3297F6-7FEB-419A-9A82-816FEFA61A45}|DockerWebAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "WorkspaceRootPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\",
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 1,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAhAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-31T17:48:35Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "DockerController.cs",
-              "DocumentMoniker": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\Controllers\\DockerController.cs",
-              "RelativeDocumentMoniker": "Controllers\\DockerController.cs",
-              "ToolTip": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\Controllers\\DockerController.cs",
-              "RelativeToolTip": "Controllers\\DockerController.cs",
-              "ViewState": "AQIAAIgAAAAAAAAAAAAkwKcAAAAKAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-23T05:38:20.133Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }
