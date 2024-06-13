@@ -129,3 +129,4 @@ C:/Users/Jan/OneDrive/Dokumente/GitHub/DockerCloudPlatform/Backend/obj/Debug/net
 /Users/okan/Developer/DockerCloudPlatform/Backend/obj/Debug/net8.0/DockerWebAPI.pdb
 /Users/okan/Developer/DockerCloudPlatform/Backend/obj/Debug/net8.0/DockerWebAPI.genruntimeconfig.cache
 /Users/okan/Developer/DockerCloudPlatform/Backend/obj/Debug/net8.0/ref/DockerWebAPI.dll
+/Users/okan/Developer/DockerCloudPlatform/Backend/bin/Debug/net8.0/MySqlConnector.dll
