@@ -16,11 +16,32 @@ namespace DockerWebAPI.Controllers
         }
 
         [HttpGet(Name = "GetContainers")]
-        public IEnumerable<string> Get()
+        public async Task<dynamic> Get(string? name = null)
+        {
+            if (name != null)
+            {
+                string[] statusStringArr = executeCommand("ps --format \"{{.Status}}\" --filter \"name=" + name + "\"");
+                string status = "Exited";
+                if(statusStringArr.Length > 0)
+                {
+                    status = statusStringArr[0].Contains("(Paused)") ? "Paused" : "Up";
+                }
+                string[] logs = executeCommand("logs " + name);
+                int port = containers[name];
+
+                return Ok(new { status = status, logs = logs, port = port });
+            }
+            else
+            {
+                return executeCommand("ps -a --format \"{{.Names}}\"");
+            }
+        }
+
+        public static string[] executeCommand(string command)
         {
             List<string> result = new List<string>();
 
-            var processInfo = new ProcessStartInfo("docker", "ps -a --format \"{{.Names}}\"");
+            var processInfo = new ProcessStartInfo("docker", command);
 
             processInfo.CreateNoWindow = true;
             processInfo.UseShellExecute = false;
@@ -88,7 +109,7 @@ namespace DockerWebAPI.Controllers
                 catch { }
 
                 int portToUse = 0;
-                if(reopenedPorts.Count > 0)
+                if (reopenedPorts.Count > 0)
                 {
                     portToUse = reopenedPorts[0];
                     reopenedPorts.RemoveAt(0);
@@ -122,11 +143,12 @@ namespace DockerWebAPI.Controllers
                 }
                 while (!process.StandardOutput.EndOfStream)
                 {
-                    if (process.StandardOutput.ReadLine().Contains("docker: Error response from daemon: Conflict. The container name"))
+                    string line = process.StandardOutput.ReadLine();
+                    if (line.Contains("docker: Error response from daemon: Conflict. The container name"))
                     {
                         return BadRequest(new { status = "error", error = "Name already in use" });
                     }
-                    else if(process.StandardOutput.ReadLine().Contains("error during connect:"))
+                    else if (line.Contains("error during connect:"))
                     {
                         return StatusCode(500, new { status = "error", error = "Docker not running on Server" });
                     }
