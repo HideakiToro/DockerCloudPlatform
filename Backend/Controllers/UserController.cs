@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic.FileIO;
 using System.Text.Json;
 
 namespace DockerWebAPI.Controllers
@@ -12,6 +13,36 @@ namespace DockerWebAPI.Controllers
         public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
+        }
+
+        /*
+       DELETE /api/Users
+       {
+           name: ""
+       } 
+       */
+
+        [HttpDelete(Name = "DeleteUser")]
+        public async Task<dynamic> Delete()
+        {
+            while (!UserConnector.isOk())
+            {
+                UserConnector.connect();
+            }
+            string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
+            try
+            {
+                var data = JsonSerializer.Deserialize<dynamic>(requestBody);
+                string name = data?.GetProperty("name").GetString();
+
+                UserConnector.SendCommand($"DELETE FROM Users WHERE name = \"{name}\"");
+
+                return Ok(new { deleted = true });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { status = "error", error = e.Message.ToString() });
+            }
         }
 
         /*

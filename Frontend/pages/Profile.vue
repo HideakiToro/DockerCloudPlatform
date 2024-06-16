@@ -21,7 +21,7 @@
       <button class="deleteCancelBtn" @click="toggleDelete(false)">
         Cancel
       </button>
-      <button class="deleteConfirmBtn" @click="console.log('Confirmed Deletion'); toggleDelete(false)">
+      <button class="deleteConfirmBtn" @click="confirmDelete()">
         Confirm
       </button>
     </div>
@@ -80,6 +80,26 @@ export default {
       }else{
         this.showPwErr = true;
       }
+    },
+    confirmDelete(){
+      console.log('Confirmed deletion')
+      $fetch("/api/User", {
+        method:"DELETE",
+        body:{
+          name:this.Username
+        }
+      }).then(res =>{
+        if(res.deleted != undefined && res.deleted == true){
+          document.cookie = ""
+          navigateTo("/Login")
+        } else{
+          this.toggleDelete(false)
+          console.log("Something went Wrong :(")
+        }
+      }).catch(e => {
+        this.toggleDelete(false)
+        console.log(e)
+      })
     }
   }
 }

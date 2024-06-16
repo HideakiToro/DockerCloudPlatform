@@ -4,10 +4,10 @@
             Docker Cloud
         </div>
         <div class="InputCon">
-            <input type="text" placeholder="Enter Username" v-model="username">
+            <input type="text" placeholder="Enter Username" v-model="username" @keydown.enter="checkLogin()">
         </div>
         <div class="InputCon">
-            <input type="password" placeholder="Enter Password" v-model="password">
+            <input type="password" placeholder="Enter Password" v-model="password" @keydown.enter="checkLogin()">
         </div>
         <div class="LoginButton" @click=checkLogin()>
             Login
