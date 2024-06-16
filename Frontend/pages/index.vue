@@ -26,7 +26,7 @@
         <button class="cancelContBtn" @click="toggleAddContainer(false)">
           Cancel
         </button>
-        <button class="confirmContBtn" @click="console.log('Added Container'); checkInput()">
+        <button class="confirmContBtn" @click="checkInput()">
           Add Container
         </button>
       </div>
@@ -221,6 +221,7 @@ input {
 
 <script>
 import checkAuth from '~/utils/auth';
+import getCookies from '~/utils/getCookies';
 
 export default {
   data() {
@@ -235,14 +236,22 @@ export default {
       cmd: "",
       showInputErr: false,
 
-      isLoading: false
+      isLoading: false,
+
+      cookies: null
     }
   },
   mounted() {
     if(!checkAuth()) navigateTo("/Login")
 
+    this.cookies = getCookies();
+
     this.resetErrors();
-    $fetch("/api/Docker").then(res => {
+    $fetch("/api/Docker", {
+      headers: {
+        "Cookie": 'username=' + this.cookies["username"]
+      }
+    }).then(res => {
       this.containers = res;
     }).catch(e => {
       console.log(e);
@@ -273,6 +282,7 @@ export default {
     },
     checkInput() {
       if (this.port >= 0 && this.name != "" && this.image != "") {
+        console.log("input ok, starting container...");
         this.addContainer()
       } else {
         this.showInputErr = true
@@ -292,7 +302,10 @@ export default {
       }
       $fetch("/api/Docker", {
         method: "POST",
-        body: body
+        body: body,
+        headers: {
+          "Cookie": 'username=' + this.cookies["username"]
+        }
       }).then(res => {
         if (res.status != undefined) {
           navigateTo("/status?name=" + this.name)
@@ -300,7 +313,6 @@ export default {
           this.isLoading = false
           this.showInputErr = true
         }
-        //navigateTo("/status?name=" + this.name)
       }).catch(e => {
         this.isLoading = false
         this.showInputErr = true

@@ -1,9 +1,14 @@
 export default defineEventHandler(async (event) => {
     let body: JSON = await readBody(event);
     try {
+        let cookies = event.headers.get('Cookie')
+        let cookieStr = cookies ? cookies : ""
         let res = await $fetch("http://localhost:5173/api/Docker", {
             method: "POST",
-            body: body
+            body: body,
+            headers: {
+                "Cookie": cookieStr
+            }
         }).catch(e => {
             return new Response(JSON.stringify(e), {
                 status: 500,

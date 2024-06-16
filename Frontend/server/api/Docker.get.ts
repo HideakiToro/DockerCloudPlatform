@@ -1,22 +1,26 @@
 export default defineEventHandler(async (event) => {
     try {
-        try{
-            let query = await getQuery(event);
-            if(query != null){
-                let content = await fetch("http://localhost:5173/api/Docker?name=" + query.name);
-                return new Response(JSON.stringify(await content.json()), {
-                    status: 200,
-                    headers: { 'Content-Type': 'application/json' },
-                });
-            } else {
-                let content = await fetch("http://localhost:5173/api/Docker");
-                return new Response(JSON.stringify(await content.json()), {
-                    status: 200,
-                    headers: { 'Content-Type': 'application/json' },
-                });
-            }
-        } catch(e) {
-            let content = await fetch("http://localhost:5173/api/Docker");
+        let cookies = event.headers.get('Cookie')
+        let cookieStr = cookies ? cookies : ""
+        let query = await getQuery(event);
+        if (query != null && query.name != null) {
+            let content = await fetch("http://localhost:5173/api/Docker?name=" + query.name, {
+                headers: {
+                    'Cookie': cookieStr
+                }
+            });
+            return new Response(JSON.stringify(await content.json()), {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+        } else {
+            let content = await fetch("http://localhost:5173/api/Docker", {
+                headers: {
+                    'Cookie': cookieStr
+                }
+            });
             return new Response(JSON.stringify(await content.json()), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },

@@ -15,36 +15,75 @@ namespace DockerWebAPI.Controllers
             _logger = logger;
         }
 
+        public static Dictionary<string, List<string>> dockerToUser = new Dictionary<string, List<string>>();
+        public static Dictionary<string, Dictionary<string, string>> nameToID = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, string> idToName = new Dictionary<string, string>();
+
         [HttpGet(Name = "GetContainers")]
         public async Task<dynamic> Get(string? name = null)
         {
+            string user = Request.Cookies["username"] ?? "";
+            Console.WriteLine($"Request by {user}");
+            if(user == "")
+            {
+                Console.WriteLine("No Usename set");
+                return new Dictionary<string, int>();
+            }
+            Console.WriteLine("Usename set");
             if (name != null)
             {
-                string[] statusStringArr = executeCommand("ps --format \"{{.Status}}\" --filter \"name=" + name + "\"");
-                string status = "Exited";
-                if(statusStringArr.Length > 0)
+                Console.WriteLine("Query");
+                Console.WriteLine("User known: " + nameToID.ContainsKey(user));
+                Console.WriteLine("Name known: " + nameToID[user].ContainsKey(name));
+                if (!nameToID.ContainsKey(user) || !nameToID[user].ContainsKey(name)) 
                 {
-                    status = statusStringArr[0].Contains("(Paused)") ? "Paused" : "Up";
+                    return Ok(new { status = "Exited", logs = new string[1] { "Setup failed!" }, port = -1 });
                 }
-                string[] logs = executeCommand("logs " + name);
-                int port = containers[name];
+                Console.WriteLine("Getting Container Info");
+                string id = nameToID[user][name];
+                try {
+                    string[] statusStringArr = executeCommand("ps --format \"{{.Status}}\" --filter \"id=" + id + "\"");
+                    Console.WriteLine("Got Status");
+                    string status = "Exited";
+                    if (statusStringArr.Length > 0)
+                    {
+                        status = statusStringArr[0].Contains("(Paused)") ? "Paused" : "Up";
+                    }
+                    Console.WriteLine("Converted Status");
+                    string[] logs = executeCommand("logs " + id);
+                    Console.WriteLine("Got Logs");
+                    int port = containers[id];
+                    Console.WriteLine("Got Port");
 
-                return Ok(new { status = status, logs = logs, port = port });
+                    return Ok(new { status, logs, port });
+                } catch {
+                    return Ok(new { status = "Exited", logs = new string[1] {"Setup failed!"}, port = -1 });
+                }
             }
             else
             {
-                string[] res = executeCommand("ps -a --format \"{{.Names}} {{.Status}}\"");
-                List<object> containers = new List<object>();
-                foreach (string s in res)
-                {
-                    string[] parts = s.Split(' ');
-                    string containerName = parts[0];
-                    string containerStatus = parts[1];
+                Console.WriteLine("Full");
+                if (dockerToUser.ContainsKey(user)) {
+                    string[] res = executeCommand("ps -a --format \"{{.ID}} {{.Status}}\"");
+                    List<object> containers = new List<object>();
+                    foreach (string s in res)
+                    {
+                        string[] parts = s.Split(' ');
+                        string containerID = parts[0];
+                        string containerStatus = parts[1];
 
-                    var container = new {name = containerName, status = containerStatus};
-                    containers.Add(container);
+                        Console.WriteLine(containerID + " : " + dockerToUser[user].Contains(containerID));
+
+                        if (dockerToUser[user].Contains(containerID))
+                        {
+                            string containerName = idToName[containerID];
+                            var container = new { name = containerName, status = containerStatus };
+                            containers.Add(container);
+                        }
+                    }
+                    return containers;
                 }
-                return containers;
+                return new List<object>();
             }
         }
 
@@ -100,13 +139,20 @@ namespace DockerWebAPI.Controllers
         [HttpPost(Name = "StartNewContainer")]
         public async Task<dynamic> Post()
         {
+            string user = Request.Cookies["username"] ?? "";
+            Console.WriteLine($"Request by {user}");
+            if (user == "")
+            {
+                Console.WriteLine("No Usename set");
+                return BadRequest(new { status = "error", error = "User missing" });
+            }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
             try
             {
                 var data = JsonSerializer.Deserialize<dynamic>(requestBody);
 
                 string name = data?.GetProperty("name").GetString();
-                if (containers.ContainsKey(name))
+                if (nameToID.ContainsKey(user) && nameToID[user].ContainsKey(name))
                 {
                     return BadRequest(new { status = "error", error = "Name already in use" });
                 }
@@ -131,7 +177,7 @@ namespace DockerWebAPI.Controllers
                     ports++;
                 }
 
-                string startCommand = $"run --name {name} -p {portToUse}:{port}";
+                string startCommand = $"run -p {portToUse}:{port}";
                 startCommand += commands.Length > 0 ? $" -e {commands}" : "";
                 startCommand += $" -d {image}";
 
@@ -152,6 +198,7 @@ namespace DockerWebAPI.Controllers
                 {
                     process.Kill();
                 }
+                string id = "";
                 while (!process.StandardOutput.EndOfStream)
                 {
                     string line = process.StandardOutput.ReadLine();
@@ -163,10 +210,30 @@ namespace DockerWebAPI.Controllers
                     {
                         return StatusCode(500, new { status = "error", error = "Docker not running on Server" });
                     }
+                    else
+                    {
+                        id = line.Substring(0, 12);
+                    }
                 }
                 process.Close();
 
-                containers.Add(name, portToUse);
+                containers.Add(id, portToUse);
+                Console.WriteLine($"Adding {id} to list of {user}.");
+                if (!dockerToUser.ContainsKey(user))
+                {
+                    Console.WriteLine($"Adding {user} to the dictionary");
+                    dockerToUser.Add(user, new List<string>());
+                }
+                dockerToUser[user].Add(id);
+
+                Console.WriteLine($"Adding {name}:{id} to dictionary of {user}.");
+                if (!nameToID.ContainsKey(user))
+                {
+                    Console.WriteLine($"Adding {user} to the dictionary");
+                    nameToID.Add(user, new Dictionary<string, string>());
+                }
+                nameToID[user].Add(name, id);
+                idToName.Add(id, name);
 
                 return Ok(new { status = "started", image = image, name = name, port = portToUse });
             }
