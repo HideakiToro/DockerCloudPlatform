@@ -1,8 +1,6 @@
 <template>
   <div class="NavBar">
-    <button class="homeBtn" @click="goHome" v-if="!showHome">
-      H
-    </button>
+    <Icon name="mdi:home-circle" class="homeBtn" @click="goHome" v-if="!showHome"/>
     <slot />
     <div class="Profil" @click="navigateProfile()" v-if="!showProfile"></div>
   </div>
@@ -42,10 +40,9 @@
   margin-right: 25pt;
   width: 32pt;
   height: 32pt;
-  border-radius: 20pt;
   background-color: transparent;
-  border: solid 3pt rgb(155, 255, 170);
   font-size: 23pt;
+  border: solid 2pt transparent;
   color: inherit;
   font-family: inherit;
   font-weight: inherit;
@@ -63,6 +60,8 @@
   background-color: rgb(155, 255, 170);
   font-family: inherit;
   font-weight: inherit;
+  border-radius: 20pt;
+  border: solid 2pt rgb(155, 255, 170);
 }
 
 @keyframes hoverProfil {
