@@ -220,6 +220,8 @@ input {
 </style>
 
 <script>
+import checkAuth from '~/utils/auth';
+
 export default {
   data() {
     return {
@@ -237,6 +239,8 @@ export default {
     }
   },
   mounted() {
+    if(!checkAuth()) navigateTo("/Login")
+
     this.resetErrors();
     $fetch("/api/Docker").then(res => {
       this.containers = res;

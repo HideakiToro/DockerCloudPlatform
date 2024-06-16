@@ -164,3 +164,37 @@ C:\Tools\Git Projects\DockerCloudPlatform\Backend\obj\Debug\net8.0\refint\Docker
 C:\Tools\Git Projects\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.pdb
 C:\Tools\Git Projects\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.genruntimeconfig.cache
 C:\Tools\Git Projects\DockerCloudPlatform\Backend\obj\Debug\net8.0\ref\DockerWebAPI.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\appsettings.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\DockerWebAPI.exe
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\DockerWebAPI.deps.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\DockerWebAPI.runtimeconfig.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\DockerWebAPI.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\DockerWebAPI.pdb
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\Microsoft.OpenApi.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\MySqlConnector.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.csproj.AssemblyReference.cache
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.AssemblyInfoInputs.cache
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.AssemblyInfo.cs
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.csproj.CoreCompileInputs.cache
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.sourcelink.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets\msbuild.DockerWebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets\msbuild.build.DockerWebAPI.props
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.DockerWebAPI.props
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.DockerWebAPI.props
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\scopedcss\bundle\DockerWebAPI.styles.css
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWe.FB65F851.Up2Date
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\refint\DockerWebAPI.dll
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.pdb
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\DockerWebAPI.genruntimeconfig.cache
+C:\Users\Jan\OneDrive\Dokumente\GitHub\DockerCloudPlatform\Backend\obj\Debug\net8.0\ref\DockerWebAPI.dll

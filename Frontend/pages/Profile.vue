@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import checkAuth from '~/utils/auth';
+import getCookies from '~/utils/getCookies';
+
 export default {
   data() {
     return {
@@ -50,9 +53,14 @@ export default {
       showPassword: false,
       Pw: "",
       repeatedPw: "",
-      Username: Math.random() > 0.5 ? "Jan Schneiders" : "jflöaksdjfkasdjölfjadsklfasödghaslöjghölfsajgksaföjgöklasfjgklfajgösdfjgklsdfhghdsfklöghjsdfökghsdfjklghsdg",
+      Username: "",
       showPwErr: false
     }
+  },
+  mounted(){
+    if(!checkAuth()) navigateTo("/Login")
+
+    this.Username = getCookies()["username"]
   },
   methods: {
     toggleDelete(show) {

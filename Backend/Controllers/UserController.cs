@@ -14,6 +14,14 @@ namespace DockerWebAPI.Controllers
             _logger = logger;
         }
 
+        /*
+       POST /api/User
+       {
+           name: "",
+           password: ""
+       }
+       */
+
         [HttpPost(Name = "CreateUser")]
         public async Task<dynamic> Post()
         {

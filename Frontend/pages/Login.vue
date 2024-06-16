@@ -100,7 +100,8 @@ input {
     font-weight: 1000;
     margin-bottom: 40pt;
 }
-.LoginError{
+
+.LoginError {
     color: rgb(255, 70, 70);
     margin-top: 25pt;
 }
@@ -117,11 +118,31 @@ export default {
     methods: {
         checkLogin() {
             if (this.username != "" && this.password != "") {
-                navigateTo('/')
+                this.login()
             }
             else {
                 this.showLoginError = true
             }
+        },
+        login(){
+            $fetch("/api/Login", {
+                method: "POST",
+                body: {
+                    name:this.username,
+                    password:this.password
+                }
+            }).then(res => {
+                if (res.ok != undefined && res.ok == true) {
+                    document.cookie = "username=" + this.username
+                    navigateTo("/")
+                } else {
+                    this.showLoginError = true
+                    console.log(res)
+                }
+            }).catch(e => {
+                this.showLoginError = true
+                console.log(e)
+            })
         }
     }
 } 

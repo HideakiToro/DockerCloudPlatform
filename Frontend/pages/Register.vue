@@ -80,7 +80,6 @@ export default {
         return {
             username: "",
             password: "",
-            register: "",
             repeatPassword:"",
             showRegisterError: false
         }
@@ -88,11 +87,30 @@ export default {
     methods: {
         checkRegister() {
             if (this.username != "" && this.password != "" && this.repeatPassword == this.password) {
-                navigateTo('/Login')
+                this.register()
             }
             else{
                 this.showRegisterError = true
             }
+        },
+        register(){
+            $fetch("/api/User", {
+                method: "POST",
+                body: {
+                    name:this.username,
+                    password:this.password
+                }
+            }).then(res => {
+                if (res.message != undefined && res.message == "Accepted!") {
+                    navigateTo("/Login")
+                } else {
+                    this.showRegisterError = true
+                    console.log(res)
+                }
+            }).catch(e => {
+                this.showRegisterError = true
+                console.log(e)
+            })
         }
     }
 } 

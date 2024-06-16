@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import checkAuth from '~/utils/auth';
+
 export default {
     data() {
         return {
@@ -59,6 +61,8 @@ export default {
         }
     },
     mounted() {
+        if(!checkAuth()) navigateTo("/Login")
+
         $fetch("/api/Docker?name=" + this.name).then(res => {
             this.info = res;
         }).catch(e => {

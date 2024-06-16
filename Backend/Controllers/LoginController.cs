@@ -13,6 +13,15 @@ namespace DockerWebAPI.Controllers
         {
             _logger = logger;
         }
+
+        /*
+        POST /api/Login
+        {
+            name: "",
+            password: ""
+        }
+        */
+
         [HttpPost(Name = "login")]
         public async Task<dynamic> Post()
         {
