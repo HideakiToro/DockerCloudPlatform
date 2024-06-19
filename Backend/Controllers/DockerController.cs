@@ -249,44 +249,7 @@ namespace DockerWebAPI.Controllers
                 if (containers.ContainsKey(id))
                 {
                     nameToID[user].Remove(name);
-                    //Stop Image
-                    var processInfo = new ProcessStartInfo("docker", $"stop {id}");
-
-                    processInfo.CreateNoWindow = true;
-                    processInfo.UseShellExecute = false;
-                    processInfo.RedirectStandardOutput = true;
-
-                    var process = new Process();
-                    process.StartInfo = processInfo;
-
-                    process.Start();
-                    process.WaitForExit(1200000);
-                    if (!process.HasExited)
-                    {
-                        process.Kill();
-                    }
-                    process.Close();
-
-                    //Remove Image
-                    processInfo = new ProcessStartInfo("docker", $"rm {id}");
-
-                    processInfo.CreateNoWindow = true;
-                    processInfo.UseShellExecute = false;
-                    processInfo.RedirectStandardOutput = true;
-
-                    process = new Process();
-                    process.StartInfo = processInfo;
-
-                    process.Start();
-                    process.WaitForExit(1200000);
-                    if (!process.HasExited)
-                    {
-                        process.Kill();
-                    }
-                    process.Close();
-
-                    reopenedPorts.Add(containers[id]);
-                    containers.Remove(id);
+                    DeleteContainer(id);
 
                     return Ok(new { status = "deleted" });
                 }
@@ -298,6 +261,28 @@ namespace DockerWebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { status = "error", error = ex.Message });
+            }
+        }
+
+        public static void DeleteContainer(string id)
+        {
+            //Stop Image
+            executeCommand($"stop {id}");
+
+            //Remove Image
+            executeCommand($"rm {id}");
+
+            reopenedPorts.Add(containers[id]);
+            containers.Remove(id);
+        }
+
+        public static void deleteAllForUser(string user){
+            if(nameToID.ContainsKey(user)){
+                foreach (KeyValuePair<string, string> pair in nameToID[user])
+                {
+                    DeleteContainer(pair.Value);
+                }
+                nameToID.Remove(user);
             }
         }
     }

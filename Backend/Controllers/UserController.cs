@@ -34,6 +34,8 @@ namespace DockerWebAPI.Controllers
             {
                 var data = JsonSerializer.Deserialize<dynamic>(requestBody);
                 string name = data?.GetProperty("name").GetString();
+                
+                DockerController.deleteAllForUser(name);
 
                 UserConnector.SendCommand($"DELETE FROM Users WHERE name = \"{name}\"");
 
