@@ -137,7 +137,6 @@ export default {
                     navigateTo("/")
                 } else {
                     this.showLoginError = true
-                    console.log(res)
                 }
             }).catch(e => {
                 this.showLoginError = true

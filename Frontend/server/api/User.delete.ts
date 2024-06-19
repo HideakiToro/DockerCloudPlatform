@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
             method: "DELETE",
             body: body
         }).catch(e => {
+            console.log(e);
             return new Response(JSON.stringify(e), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
@@ -15,6 +16,7 @@ export default defineEventHandler(async (event) => {
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (e) {
+        console.log(e);
         return new Response(JSON.stringify({ error: e }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' },

@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
             });
         }
     } catch (e) {
+        console.log(e);
         return new Response(JSON.stringify({ error: e }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' },

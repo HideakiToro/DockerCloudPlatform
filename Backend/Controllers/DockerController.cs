@@ -23,37 +23,27 @@ namespace DockerWebAPI.Controllers
         public async Task<dynamic> Get(string? name = null)
         {
             string user = Request.Cookies["username"] ?? "";
-            Console.WriteLine($"Request by {user}");
             if(user == "")
             {
-                Console.WriteLine("No Usename set");
                 return new Dictionary<string, int>();
             }
-            Console.WriteLine("Usename set");
             if (name != null)
             {
-                Console.WriteLine("Query");
-                Console.WriteLine("User known: " + nameToID.ContainsKey(user));
-                Console.WriteLine("Name known: " + nameToID[user].ContainsKey(name));
+                Console.WriteLine("Status Request");
                 if (!nameToID.ContainsKey(user) || !nameToID[user].ContainsKey(name)) 
                 {
                     return Ok(new { status = "Exited", logs = new string[1] { "Setup failed!" }, port = -1 });
                 }
-                Console.WriteLine("Getting Container Info");
                 string id = nameToID[user][name];
                 try {
                     string[] statusStringArr = executeCommand("ps --format \"{{.Status}}\" --filter \"id=" + id + "\"");
-                    Console.WriteLine("Got Status");
                     string status = "Exited";
                     if (statusStringArr.Length > 0)
                     {
                         status = statusStringArr[0].Contains("(Paused)") ? "Paused" : "Up";
                     }
-                    Console.WriteLine("Converted Status");
                     string[] logs = executeCommand("logs " + id);
-                    Console.WriteLine("Got Logs");
                     int port = containers[id];
-                    Console.WriteLine("Got Port");
 
                     return Ok(new { status, logs, port });
                 } catch {
@@ -62,7 +52,7 @@ namespace DockerWebAPI.Controllers
             }
             else
             {
-                Console.WriteLine("Full");
+                Console.WriteLine("Overview Request");
                 if (dockerToUser.ContainsKey(user)) {
                     string[] res = executeCommand("ps -a --format \"{{.ID}} {{.Status}}\"");
                     List<object> containers = new List<object>();
@@ -71,8 +61,6 @@ namespace DockerWebAPI.Controllers
                         string[] parts = s.Split(' ');
                         string containerID = parts[0];
                         string containerStatus = parts[1];
-
-                        Console.WriteLine(containerID + " : " + dockerToUser[user].Contains(containerID));
 
                         if (dockerToUser[user].Contains(containerID))
                         {
@@ -102,24 +90,17 @@ namespace DockerWebAPI.Controllers
             process.StartInfo = processInfo;
 
             process.Start();
-            Console.WriteLine("process started");
             process.WaitForExit(1200000);
             while (!process.StandardOutput.EndOfStream)
             {
                 result.Add(process.StandardOutput.ReadLine());
             }
-            Console.WriteLine("process ended");
             if (!process.HasExited)
             {
                 process.Kill();
             }
 
             process.Close();
-            Console.WriteLine("Output is as follows:");
-            foreach (string s in result)
-            {
-                Console.WriteLine(s);
-            }
             return result.ToArray();
         }
 
@@ -139,11 +120,10 @@ namespace DockerWebAPI.Controllers
         [HttpPost(Name = "StartNewContainer")]
         public async Task<dynamic> Post()
         {
+            Console.WriteLine("Start Request");
             string user = Request.Cookies["username"] ?? "";
-            Console.WriteLine($"Request by {user}");
             if (user == "")
             {
-                Console.WriteLine("No Usename set");
                 return BadRequest(new { status = "error", error = "User missing" });
             }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
@@ -191,9 +171,7 @@ namespace DockerWebAPI.Controllers
                 process.StartInfo = processInfo;
 
                 process.Start();
-                Console.WriteLine("process started");
                 process.WaitForExit(1200000);
-                Console.WriteLine("process ended");
                 if (!process.HasExited)
                 {
                     process.Kill();
@@ -218,18 +196,14 @@ namespace DockerWebAPI.Controllers
                 process.Close();
 
                 containers.Add(id, portToUse);
-                Console.WriteLine($"Adding {id} to list of {user}.");
                 if (!dockerToUser.ContainsKey(user))
                 {
-                    Console.WriteLine($"Adding {user} to the dictionary");
                     dockerToUser.Add(user, new List<string>());
                 }
                 dockerToUser[user].Add(id);
 
-                Console.WriteLine($"Adding {name}:{id} to dictionary of {user}.");
                 if (!nameToID.ContainsKey(user))
                 {
-                    Console.WriteLine($"Adding {user} to the dictionary");
                     nameToID.Add(user, new Dictionary<string, string>());
                 }
                 nameToID[user].Add(name, id);
@@ -252,6 +226,12 @@ namespace DockerWebAPI.Controllers
         [HttpDelete(Name = "DeleteContainer")]
         public async Task<dynamic> Delete()
         {
+            Console.WriteLine("Delete Request");
+            string user = Request.Cookies["username"] ?? "";
+            if (user == "")
+            {
+                return NotFound(new { status = "User not Found" }); ;
+            }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
             try
             {
@@ -259,11 +239,18 @@ namespace DockerWebAPI.Controllers
                 //return data;
 
                 string name = data?.GetProperty("name").GetString();
-                if (containers.ContainsKey(name))
+
+                if (!nameToID.ContainsKey(user) || !nameToID[user].ContainsKey(name))
                 {
-                    //Get ID
-                    Console.WriteLine("deleting: " + name);
-                    var processInfo = new ProcessStartInfo("docker", $"ps -a -q --filter ancestor={name} --format=\"{{.ID}}\"");
+                    return Ok(new { status = "deleted" });
+                }
+                string id = nameToID[user][name];
+
+                if (containers.ContainsKey(id))
+                {
+                    nameToID[user].Remove(name);
+                    //Stop Image
+                    var processInfo = new ProcessStartInfo("docker", $"stop {id}");
 
                     processInfo.CreateNoWindow = true;
                     processInfo.UseShellExecute = false;
@@ -273,39 +260,7 @@ namespace DockerWebAPI.Controllers
                     process.StartInfo = processInfo;
 
                     process.Start();
-                    Console.WriteLine("process started");
                     process.WaitForExit(1200000);
-                    string id = "";
-                    while (!process.StandardOutput.EndOfStream)
-                    {
-                        id = process.StandardOutput.ReadLine();
-                    }
-                    Console.WriteLine("process ended");
-                    if (!process.HasExited)
-                    {
-                        process.Kill();
-                    }
-                    process.Close();
-
-                    //Stop Image
-                    Console.WriteLine("Stopping Container...");
-                    processInfo = new ProcessStartInfo("docker", $"stop {id}");
-
-                    processInfo.CreateNoWindow = true;
-                    processInfo.UseShellExecute = false;
-                    processInfo.RedirectStandardOutput = true;
-
-                    process = new Process();
-                    process.StartInfo = processInfo;
-
-                    process.Start();
-                    Console.WriteLine("process started");
-                    process.WaitForExit(1200000);
-                    while (!process.StandardOutput.EndOfStream)
-                    {
-                        Console.WriteLine(process.StandardOutput.ReadLine());
-                    }
-                    Console.WriteLine("process ended");
                     if (!process.HasExited)
                     {
                         process.Kill();
@@ -313,7 +268,6 @@ namespace DockerWebAPI.Controllers
                     process.Close();
 
                     //Remove Image
-                    Console.WriteLine("Removing Container...");
                     processInfo = new ProcessStartInfo("docker", $"rm {id}");
 
                     processInfo.CreateNoWindow = true;
@@ -324,22 +278,15 @@ namespace DockerWebAPI.Controllers
                     process.StartInfo = processInfo;
 
                     process.Start();
-                    Console.WriteLine("process started");
                     process.WaitForExit(1200000);
-                    while (!process.StandardOutput.EndOfStream)
-                    {
-                        Console.WriteLine(process.StandardOutput.ReadLine());
-                    }
-                    Console.WriteLine("process ended");
                     if (!process.HasExited)
                     {
                         process.Kill();
                     }
                     process.Close();
 
-                    reopenedPorts.Add(containers[name]);
-                    containers.Remove(name);
-                    Console.WriteLine($"Container {name} removed");
+                    reopenedPorts.Add(containers[id]);
+                    containers.Remove(id);
 
                     return Ok(new { status = "deleted" });
                 }

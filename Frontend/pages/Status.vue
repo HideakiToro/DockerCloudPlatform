@@ -45,6 +45,7 @@
 
 <script>
 import checkAuth from '~/utils/auth';
+import getCookies from '~/utils/getCookies'
 
 export default {
     data() {
@@ -57,11 +58,14 @@ export default {
                 status: "Pending",
                 logs: [],
                 port: -1
-            }
+            },
+            cookies: null
         }
     },
     mounted() {
         if(!checkAuth()) navigateTo("/Login")
+
+        this.cookies = getCookies();
 
         $fetch("/api/Docker?name=" + this.name).then(res => {
             this.info = res;
@@ -80,6 +84,9 @@ export default {
                 method: "DELETE",
                 body: {
                     name: this.name
+                },
+                headers: {
+                    'Cookie': 'username=' + this.cookies["username"]
                 }
             }).then(res => {
                 if (res.status != undefined) {
