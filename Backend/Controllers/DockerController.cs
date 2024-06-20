@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace DockerWebAPI.Controllers
 {
@@ -8,6 +9,7 @@ namespace DockerWebAPI.Controllers
     [Route("/api/[controller]")]
     public class DockerController : ControllerBase
     {
+        #region Setup
         private readonly ILogger<DockerController> _logger;
 
         public DockerController(ILogger<DockerController> logger)
@@ -15,9 +17,14 @@ namespace DockerWebAPI.Controllers
             _logger = logger;
         }
 
-        public static Dictionary<string, List<string>> dockerToUser = new Dictionary<string, List<string>>();
-        public static Dictionary<string, Dictionary<string, string>> nameToID = new Dictionary<string, Dictionary<string, string>>();
-        public static Dictionary<string, string> idToName = new Dictionary<string, string>();
+        //public static Dictionary<string, List<string>> dockerToUser = new Dictionary<string, List<string>>();
+        //public static Dictionary<string, Dictionary<string, string>> nameToID = new Dictionary<string, Dictionary<string, string>>();
+        //public static Dictionary<string, string> idToName = new Dictionary<string, string>();
+
+        public static int ports = 6000;
+        public static List<int> reopenedPorts = new List<int>();
+        //public static Dictionary<string, int> containers = new Dictionary<string, int>();
+        #endregion
 
         [HttpGet(Name = "GetContainers")]
         public async Task<dynamic> Get(string? name = null)
@@ -30,11 +37,13 @@ namespace DockerWebAPI.Controllers
             if (name != null)
             {
                 Console.WriteLine("Status Request");
-                if (!nameToID.ContainsKey(user) || !nameToID[user].ContainsKey(name)) 
+
+                string[] ids = UserConnector.SendCommand($"SELECT Containers.id, Containers.port FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
+                if(ids.Length <= 0)
                 {
                     return Ok(new { status = "Exited", logs = new string[1] { "Setup failed!" }, port = -1 });
                 }
-                string id = nameToID[user][name];
+                string id = ids[0].Split(',')[0];
                 try {
                     string[] statusStringArr = executeCommand("ps --format \"{{.Status}}\" --filter \"id=" + id + "\"");
                     string status = "Exited";
@@ -43,7 +52,8 @@ namespace DockerWebAPI.Controllers
                         status = statusStringArr[0].Contains("(Paused)") ? "Paused" : "Up";
                     }
                     string[] logs = executeCommand("logs " + id);
-                    int port = containers[id];
+
+                    int port = int.Parse(ids[0].Split(',')[1]);
 
                     return Ok(new { status, logs, port });
                 } catch {
@@ -53,7 +63,19 @@ namespace DockerWebAPI.Controllers
             else
             {
                 Console.WriteLine("Overview Request");
-                if (dockerToUser.ContainsKey(user)) {
+                string[] userContainers = UserConnector.SendCommand($"SELECT Containers.id, Containers.name FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Users.name = '{user}'");
+                if (userContainers.Length > 0) {
+                    List<string> ids = new List<string>();
+                    foreach (string id in userContainers)
+                    {
+                        ids.Add(id.Split(',')[0]);
+                    }
+                    Dictionary<string, string> idsToNames = new Dictionary<string, string>();
+                    foreach (string line in userContainers)
+                    {
+                        idsToNames.Add(line.Split(',')[0], line.Split(',')[1]);
+                    }
+
                     string[] res = executeCommand("ps -a --format \"{{.ID}} {{.Status}}\"");
                     List<object> containers = new List<object>();
                     foreach (string s in res)
@@ -62,9 +84,9 @@ namespace DockerWebAPI.Controllers
                         string containerID = parts[0];
                         string containerStatus = parts[1];
 
-                        if (dockerToUser[user].Contains(containerID))
+                        if (ids.Contains(containerID))
                         {
-                            string containerName = idToName[containerID];
+                            string containerName = idsToNames[containerID];
                             var container = new { name = containerName, status = containerStatus };
                             containers.Add(container);
                         }
@@ -104,10 +126,6 @@ namespace DockerWebAPI.Controllers
             return result.ToArray();
         }
 
-        public static int ports = 6000;
-        public static List<int> reopenedPorts = new List<int>();
-        public static Dictionary<string, int> containers = new Dictionary<string, int>();
-
         /*
          * POST /api/Docker
          * {
@@ -132,10 +150,13 @@ namespace DockerWebAPI.Controllers
                 var data = JsonSerializer.Deserialize<dynamic>(requestBody);
 
                 string name = data?.GetProperty("name").GetString();
-                if (nameToID.ContainsKey(user) && nameToID[user].ContainsKey(name))
+                //check that user doesn't use the same name
+                string[] names = UserConnector.SendCommand($"SELECT * FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
+                if (names.Length > 0)
                 {
                     return BadRequest(new { status = "error", error = "Name already in use" });
                 }
+
                 string image = data?.GetProperty("image").GetString();
                 string port = data?.GetProperty("port").GetString();
                 string commands = "";
@@ -148,11 +169,13 @@ namespace DockerWebAPI.Controllers
                 int portToUse = 0;
                 if (reopenedPorts.Count > 0)
                 {
+                    Console.WriteLine("RP: " + reopenedPorts[0]);
                     portToUse = reopenedPorts[0];
                     reopenedPorts.RemoveAt(0);
                 }
                 else
                 {
+                    Console.WriteLine("NEW: " + ports);
                     portToUse = ports;
                     ports++;
                 }
@@ -161,25 +184,10 @@ namespace DockerWebAPI.Controllers
                 startCommand += commands.Length > 0 ? $" -e {commands}" : "";
                 startCommand += $" -d {image}";
 
-                var processInfo = new ProcessStartInfo("docker", startCommand);
-
-                processInfo.CreateNoWindow = true;
-                processInfo.UseShellExecute = false;
-                processInfo.RedirectStandardOutput = true;
-
-                var process = new Process();
-                process.StartInfo = processInfo;
-
-                process.Start();
-                process.WaitForExit(1200000);
-                if (!process.HasExited)
-                {
-                    process.Kill();
-                }
+                string[] lines = executeCommand(startCommand);
                 string id = "";
-                while (!process.StandardOutput.EndOfStream)
+                foreach (string line in lines)
                 {
-                    string line = process.StandardOutput.ReadLine();
                     if (line.Contains("docker: Error response from daemon: Conflict. The container name"))
                     {
                         return BadRequest(new { status = "error", error = "Name already in use" });
@@ -193,21 +201,11 @@ namespace DockerWebAPI.Controllers
                         id = line.Substring(0, 12);
                     }
                 }
-                process.Close();
 
-                containers.Add(id, portToUse);
-                if (!dockerToUser.ContainsKey(user))
-                {
-                    dockerToUser.Add(user, new List<string>());
-                }
-                dockerToUser[user].Add(id);
+                string[] users = UserConnector.SendCommand($"SELECT id FROM Users WHERE name = \"{user}\"");
+                string userID = users[0].Split(',')[0];
 
-                if (!nameToID.ContainsKey(user))
-                {
-                    nameToID.Add(user, new Dictionary<string, string>());
-                }
-                nameToID[user].Add(name, id);
-                idToName.Add(id, name);
+                UserConnector.SendCommand($"INSERT INTO Containers (id, name, userID, port) VALUES ('{id}', '{name}', {userID}, {portToUse})");
 
                 return Ok(new { status = "started", image = image, name = name, port = portToUse });
             }
@@ -230,33 +228,27 @@ namespace DockerWebAPI.Controllers
             string user = Request.Cookies["username"] ?? "";
             if (user == "")
             {
+                Console.WriteLine("Not Found");
                 return NotFound(new { status = "User not Found" }); ;
             }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
             try
             {
                 var data = JsonSerializer.Deserialize<dynamic>(requestBody);
-                //return data;
 
                 string name = data?.GetProperty("name").GetString();
 
-                if (!nameToID.ContainsKey(user) || !nameToID[user].ContainsKey(name))
+                string[] userContainers = UserConnector.SendCommand($"SELECT Containers.id FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
+
+                if (userContainers.Length <= 0)
                 {
+                    Console.WriteLine(user + " requested to delete " + name);
                     return Ok(new { status = "deleted" });
                 }
-                string id = nameToID[user][name];
+                string id = userContainers[0].Split(',')[0];
+                DeleteContainer(id);
 
-                if (containers.ContainsKey(id))
-                {
-                    nameToID[user].Remove(name);
-                    DeleteContainer(id);
-
-                    return Ok(new { status = "deleted" });
-                }
-                else
-                {
-                    return NotFound(new { status = "Not Found" });
-                }
+                return Ok(new { status = "deleted" });
             }
             catch (Exception ex)
             {
@@ -266,23 +258,23 @@ namespace DockerWebAPI.Controllers
 
         public static void DeleteContainer(string id)
         {
+            Console.WriteLine(id);
             //Stop Image
             executeCommand($"stop {id}");
 
             //Remove Image
             executeCommand($"rm {id}");
 
-            reopenedPorts.Add(containers[id]);
-            containers.Remove(id);
+            string[] ports = UserConnector.SendCommand($"SELECT port FROM Containers WHERE id = '{id}'");
+            UserConnector.SendCommand($"DELETE FROM Containers WHERE id = '{id}'");
+            reopenedPorts.Add(int.Parse(ports[0].Split(',')[0]));
         }
 
         public static void deleteAllForUser(string user){
-            if(nameToID.ContainsKey(user)){
-                foreach (KeyValuePair<string, string> pair in nameToID[user])
-                {
-                    DeleteContainer(pair.Value);
-                }
-                nameToID.Remove(user);
+            string[] ids = UserConnector.SendCommand($"SELECT Containers.id FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Users.name = '{user}'");
+            foreach (string id in ids)
+            {
+                DeleteContainer(id.Split(',')[0]);
             }
         }
     }

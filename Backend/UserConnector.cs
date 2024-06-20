@@ -15,6 +15,7 @@ public class UserConnector
             try
             {
                 SendCommand("CREATE TABLE Users (id int NOT NULL AUTO_INCREMENT, name varchar(255), password varchar(255), PRIMARY KEY(id));");
+                SendCommand("CREATE TABLE Containers (id varchar(255) NOT NULL, name varchar(255), userID int, port int, PRIMARY KEY(id));");
             }
             catch { }
 
