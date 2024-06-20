@@ -25,9 +25,9 @@ namespace DockerWebAPI.Controllers
         [HttpDelete(Name = "DeleteUser")]
         public async Task<dynamic> Delete()
         {
-            while (!UserConnector.isOk())
+            while (!MySQLManager.isOk())
             {
-                UserConnector.connect();
+                MySQLManager.connect();
             }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
             try
@@ -37,7 +37,7 @@ namespace DockerWebAPI.Controllers
                 
                 DockerController.deleteAllForUser(name);
 
-                UserConnector.SendCommand($"DELETE FROM Users WHERE name = \"{name}\"");
+                MySQLManager.SendCommand($"DELETE FROM Users WHERE name = \"{name}\"");
 
                 return Ok(new { deleted = true });
             }
@@ -58,9 +58,9 @@ namespace DockerWebAPI.Controllers
         [HttpPost(Name = "CreateUser")]
         public async Task<dynamic> Post()
         {
-            while (!UserConnector.isOk())
+            while (!MySQLManager.isOk())
             {
-                UserConnector.connect();
+                MySQLManager.connect();
             }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
             try
@@ -69,7 +69,7 @@ namespace DockerWebAPI.Controllers
                 string name = data?.GetProperty("name").GetString();
                 string password = data?.GetProperty("password").GetString();
 
-                UserConnector.SendCommand($"INSERT INTO Users (name,password) VALUES (\"{name}\",\"{password}\")");
+                MySQLManager.SendCommand($"INSERT INTO Users (name,password) VALUES (\"{name}\",\"{password}\")");
 
                 return Ok(new { message = "Accepted!" });
             }

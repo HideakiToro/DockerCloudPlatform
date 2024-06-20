@@ -25,9 +25,9 @@ namespace DockerWebAPI.Controllers
         [HttpPost(Name = "login")]
         public async Task<dynamic> Post()
         {
-            while (!UserConnector.isOk())
+            while (!MySQLManager.isOk())
             {
-                UserConnector.connect();
+                MySQLManager.connect();
             }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
             try
@@ -36,7 +36,7 @@ namespace DockerWebAPI.Controllers
                 string name = data?.GetProperty("name").GetString();
                 string password = data?.GetProperty("password").GetString();
 
-                var response = UserConnector.SendCommand($"SELECT * FROM Users WHERE name = \"{name}\" AND password = \"{password}\"");
+                var response = MySQLManager.SendCommand($"SELECT * FROM Users WHERE name = \"{name}\" AND password = \"{password}\"");
 
                 return Ok(new { ok = response.Length > 0 });
             }

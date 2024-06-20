@@ -16,16 +16,9 @@ namespace DockerWebAPI.Controllers
         {
             _logger = logger;
         }
-
-        //public static Dictionary<string, List<string>> dockerToUser = new Dictionary<string, List<string>>();
-        //public static Dictionary<string, Dictionary<string, string>> nameToID = new Dictionary<string, Dictionary<string, string>>();
-        //public static Dictionary<string, string> idToName = new Dictionary<string, string>();
-
-        public static int ports = 6000;
-        public static List<int> reopenedPorts = new List<int>();
-        //public static Dictionary<string, int> containers = new Dictionary<string, int>();
         #endregion
 
+        #region GET
         [HttpGet(Name = "GetContainers")]
         public async Task<dynamic> Get(string? name = null)
         {
@@ -38,7 +31,7 @@ namespace DockerWebAPI.Controllers
             {
                 Console.WriteLine("Status Request");
 
-                string[] ids = UserConnector.SendCommand($"SELECT Containers.id, Containers.port FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
+                string[] ids = MySQLManager.SendCommand($"SELECT Containers.id, Containers.port FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
                 if(ids.Length <= 0)
                 {
                     return Ok(new { status = "Exited", logs = new string[1] { "Setup failed!" }, port = -1 });
@@ -63,7 +56,7 @@ namespace DockerWebAPI.Controllers
             else
             {
                 Console.WriteLine("Overview Request");
-                string[] userContainers = UserConnector.SendCommand($"SELECT Containers.id, Containers.name FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Users.name = '{user}'");
+                string[] userContainers = MySQLManager.SendCommand($"SELECT Containers.id, Containers.name FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Users.name = '{user}'");
                 if (userContainers.Length > 0) {
                     List<string> ids = new List<string>();
                     foreach (string id in userContainers)
@@ -96,6 +89,7 @@ namespace DockerWebAPI.Controllers
                 return new List<object>();
             }
         }
+        #endregion
 
         public static string[] executeCommand(string command)
         {
@@ -126,6 +120,7 @@ namespace DockerWebAPI.Controllers
             return result.ToArray();
         }
 
+        #region POST
         /*
          * POST /api/Docker
          * {
@@ -150,8 +145,8 @@ namespace DockerWebAPI.Controllers
                 var data = JsonSerializer.Deserialize<dynamic>(requestBody);
 
                 string name = data?.GetProperty("name").GetString();
-                //check that user doesn't use the same name
-                string[] names = UserConnector.SendCommand($"SELECT * FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
+
+                string[] names = MySQLManager.SendCommand($"SELECT * FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
                 if (names.Length > 0)
                 {
                     return BadRequest(new { status = "error", error = "Name already in use" });
@@ -166,19 +161,8 @@ namespace DockerWebAPI.Controllers
                 }
                 catch { }
 
-                int portToUse = 0;
-                if (reopenedPorts.Count > 0)
-                {
-                    Console.WriteLine("RP: " + reopenedPorts[0]);
-                    portToUse = reopenedPorts[0];
-                    reopenedPorts.RemoveAt(0);
-                }
-                else
-                {
-                    Console.WriteLine("NEW: " + ports);
-                    portToUse = ports;
-                    ports++;
-                }
+                int portToUse = int.Parse(MySQLManager.SendCommand("SELECT port FROM Ports")[0].Split(',')[0]);
+                MySQLManager.SendCommand($"DELETE FROM Ports WHERE port = {portToUse}");
 
                 string startCommand = $"run -p {portToUse}:{port}";
                 startCommand += commands.Length > 0 ? $" -e {commands}" : "";
@@ -202,10 +186,10 @@ namespace DockerWebAPI.Controllers
                     }
                 }
 
-                string[] users = UserConnector.SendCommand($"SELECT id FROM Users WHERE name = \"{user}\"");
+                string[] users = MySQLManager.SendCommand($"SELECT id FROM Users WHERE name = \"{user}\"");
                 string userID = users[0].Split(',')[0];
 
-                UserConnector.SendCommand($"INSERT INTO Containers (id, name, userID, port) VALUES ('{id}', '{name}', {userID}, {portToUse})");
+                MySQLManager.SendCommand($"INSERT INTO Containers (id, name, userID, port) VALUES ('{id}', '{name}', {userID}, {portToUse})");
 
                 return Ok(new { status = "started", image = image, name = name, port = portToUse });
             }
@@ -214,7 +198,9 @@ namespace DockerWebAPI.Controllers
                 return BadRequest(new { status = "error", error = ex.Message });
             }
         }
+        #endregion
 
+        #region DELETE
         /*
          * DELETE /api/Docker
          * {
@@ -228,7 +214,6 @@ namespace DockerWebAPI.Controllers
             string user = Request.Cookies["username"] ?? "";
             if (user == "")
             {
-                Console.WriteLine("Not Found");
                 return NotFound(new { status = "User not Found" }); ;
             }
             string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
@@ -238,11 +223,10 @@ namespace DockerWebAPI.Controllers
 
                 string name = data?.GetProperty("name").GetString();
 
-                string[] userContainers = UserConnector.SendCommand($"SELECT Containers.id FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
+                string[] userContainers = MySQLManager.SendCommand($"SELECT Containers.id FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Containers.name = '{name}' AND Users.name = '{user}'");
 
                 if (userContainers.Length <= 0)
                 {
-                    Console.WriteLine(user + " requested to delete " + name);
                     return Ok(new { status = "deleted" });
                 }
                 string id = userContainers[0].Split(',')[0];
@@ -258,24 +242,24 @@ namespace DockerWebAPI.Controllers
 
         public static void DeleteContainer(string id)
         {
-            Console.WriteLine(id);
             //Stop Image
             executeCommand($"stop {id}");
 
             //Remove Image
             executeCommand($"rm {id}");
 
-            string[] ports = UserConnector.SendCommand($"SELECT port FROM Containers WHERE id = '{id}'");
-            UserConnector.SendCommand($"DELETE FROM Containers WHERE id = '{id}'");
-            reopenedPorts.Add(int.Parse(ports[0].Split(',')[0]));
+            int port = int.Parse(MySQLManager.SendCommand($"SELECT port FROM Containers WHERE id = '{id}'")[0].Split(',')[0]);
+            MySQLManager.SendCommand($"INSERT INTO Ports (port) VALUES ({port})");
+            MySQLManager.SendCommand($"DELETE FROM Containers WHERE id = '{id}'");
         }
 
         public static void deleteAllForUser(string user){
-            string[] ids = UserConnector.SendCommand($"SELECT Containers.id FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Users.name = '{user}'");
+            string[] ids = MySQLManager.SendCommand($"SELECT Containers.id FROM Containers JOIN Users ON Containers.userID = Users.id WHERE Users.name = '{user}'");
             foreach (string id in ids)
             {
                 DeleteContainer(id.Split(',')[0]);
             }
         }
+        #endregion
     }
 }

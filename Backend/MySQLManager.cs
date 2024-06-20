@@ -1,7 +1,7 @@
 using System;
 using MySqlConnector;
 
-public class UserConnector
+public class MySQLManager
 {
     static MySqlConnection conn;    //Anbindung an MySQL
     public static void connect()
@@ -16,6 +16,15 @@ public class UserConnector
             {
                 SendCommand("CREATE TABLE Users (id int NOT NULL AUTO_INCREMENT, name varchar(255), password varchar(255), PRIMARY KEY(id));");
                 SendCommand("CREATE TABLE Containers (id varchar(255) NOT NULL, name varchar(255), userID int, port int, PRIMARY KEY(id));");
+                SendCommand("CREATE TABLE Ports (port int, PRIMARY KEY(port));");
+                if (SendCommand("SELECT * FROM Ports").Length <= 0)
+                {
+                    for (int i = 6000; i < 7000; i++)
+                    {
+                        SendCommand($"INSERT INTO Ports (port) VALUES ({i})");
+                    }
+                    Console.WriteLine(SendCommand("SELECT * FROM Ports").Length);
+                }
             }
             catch { }
 
