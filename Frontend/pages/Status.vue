@@ -18,8 +18,8 @@
         </div>
         <div class="StatusInfo">
             <div class="StatusInfoTitle">Connection</div>
-            <div v-if="connectedByPort">IP: 127.0.0.1:{{ info.port }}</div>
-            <div v-else>URL: 127.0.0.1:3000/pods?id=15</div>
+            <div v-if="connectedByPort">IP: {{ host }}:{{ info.port }}</div>
+            <div v-else>URL: {{ host }}]:3000/pods?id=-1</div>
         </div>
 
     </div>
@@ -59,7 +59,8 @@ export default {
                 logs: [],
                 port: -1
             },
-            cookies: null
+            cookies: null,
+            host: window.location.hostname
         }
     },
     mounted() {
