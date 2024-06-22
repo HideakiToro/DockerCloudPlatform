@@ -560,24 +560,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Jan\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\hidea\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
+      "projectUniqueName": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
       "projectName": "DockerWebAPI",
-      "projectPath": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
-      "packagesPath": "C:\\Users\\Jan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jan\\OneDrive\\Dokumente\\GitHub\\DockerCloudPlatform\\Backend\\obj\\",
+      "projectPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
+      "packagesPath": "C:\\Users\\hidea\\.nuget\\packages\\",
+      "outputPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Jan\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\hidea\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
