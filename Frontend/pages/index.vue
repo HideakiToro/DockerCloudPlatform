@@ -1,9 +1,7 @@
 <template>
   <NavBar showHome=true>
     Your Containers
-    <div class="AddContainer" @click="toggleAddContainer(true)">
-      +
-    </div>
+    <Icon name="mdi:add-circle" class="AddContainer" @click="toggleAddContainer(true)"/>
   </NavBar>
   <div v-if="backendUnavailable" class="Error">
     The Server isn't available right now.
@@ -112,13 +110,12 @@
 
 .AddContainer {
   position: absolute;
-  top: 5pt;
+  color: rgb(155, 255, 170);
+  top: 7pt;
   right: 75pt;
   width: 32pt;
   height: 32pt;
   border-radius: 20pt;
-  border: solid 3pt rgb(155, 255, 170);
-  font-size: 27pt;
   text-align: center;
   align-items: center;
   -webkit-touch-callout: none;
@@ -129,9 +126,10 @@
 }
 
 .AddContainer:hover {
-  animation: hoverProfil 0.05s linear forwards;
+  border: solid 2pt rgb(155, 255, 170);
   color: rgb(35, 35, 45);
-  font-weight: 1000;
+  background-color: rgb(155, 255, 170);
+  top: 5pt;
 }
 
 .addBackground {
