@@ -2,7 +2,7 @@
   <div class="NavBar">
     <Icon name="mdi:home-circle" class="homeBtn" @click="goHome" v-if="!showHome"/>
     <slot />
-    <div class="Profil" @click="navigateProfile()" v-if="!showProfile"></div>
+    <Icon name="mdi:account-circle" class="Profil" @click="navigateProfile" v-if="!showProfile"/>
   </div>
 </template>
 
@@ -22,16 +22,21 @@
 
 .Profil {
   position: absolute;
-  top: 5pt;
+  top: 7pt;
   right: 25pt;
   width: 32pt;
   height: 32pt;
   border-radius: 20pt;
-  border: solid 3pt rgb(155, 255, 170);
 }
 
 .Profil:hover {
-  animation: hoverProfil 0.05s linear forwards;
+  color: rgb(35, 35, 45);
+  top: 5pt;
+  background-color: rgb(155, 255, 170);
+  font-family: inherit;
+  font-weight: inherit;
+  border-radius: 20pt;
+  border: solid 2pt rgb(155, 255, 170);
 }
 
 .homeBtn {
@@ -62,16 +67,6 @@
   font-weight: inherit;
   border-radius: 20pt;
   border: solid 2pt rgb(155, 255, 170);
-}
-
-@keyframes hoverProfil {
-  from {
-    background-color: transparent;
-  }
-
-  to {
-    background-color: rgb(155, 255, 170);
-  }
 }
 </style>
 

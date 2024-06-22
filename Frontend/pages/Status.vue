@@ -1,9 +1,7 @@
 <template>
     <NavBar>
         Container Info
-        <div class="removeCont" @click="toggleRemoveContainer(true)">
-            -
-        </div>
+        <Icon name="mdi:remove-circle" class="removeCont" @click="toggleRemoveContainer(true)"/>
     </NavBar>
     <div class="StatusContainer">
         <div class="StatusName">{{ name }}</div>
@@ -121,14 +119,13 @@ export default {
 }
 
 .removeCont {
+    color: rgb(155, 255, 170);
     position: absolute;
-    top: 5pt;
+    top: 7pt;
     right: 75pt;
     width: 32pt;
     height: 32pt;
     border-radius: 20pt;
-    border: solid 3pt rgb(155, 255, 170);
-    font-size: 27pt;
     text-align: center;
     align-items: center;
     -webkit-touch-callout: none;
@@ -139,9 +136,10 @@ export default {
 }
 
 .removeCont:hover {
-    animation: hoverProfil 0.05s linear forwards;
     color: rgb(35, 35, 45);
-    font-weight: 1000;
+    background-color: rgb(155, 255, 170);
+    border: solid 2pt rgb(155, 255, 170);
+    top:5pt;
 }
 
 .confirmRemBtn {

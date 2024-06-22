@@ -12,6 +12,9 @@
         <div class="RegisterButton" @click=checkRegister()>
             Register
         </div>
+        <div class="RegisterButton" @click="navigateTo('/login')">
+            Cancel
+        </div>
         <div v-if="showRegisterError" class="RegisterError">
             Password does not match!
         </div>
