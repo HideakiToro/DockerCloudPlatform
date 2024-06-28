@@ -1,5 +1,5 @@
 <template>
-  <NavBar showProfile = true>Your Profile</NavBar>
+  <NavBar showProfile=true>Your Profile</NavBar>
   <div class="StatusContainer">
     <div class="userName">
       {{ Username }}
@@ -12,6 +12,11 @@
     <div class="buttonContainer">
       <button class="deleteActionBtn" @click="toggleDelete(true)">
         Delete Account
+      </button>
+    </div>
+    <div class="buttonContainer">
+      <button class="deleteActionBtn" @click="Logout()">
+        Logout
       </button>
     </div>
   </div>
@@ -27,16 +32,16 @@
     </div>
     <div class="changePwWindow" v-if="showPassword">
       Change Password
-      <div class="buttonContainer"><input type="password" placeholder="Enter Password..."  v-model="Pw"/></div>
-      <div class="buttonContainer"><input type="password" placeholder="Repeat Password..." v-model="repeatedPw"/></div>
+      <div class="buttonContainer"><input type="password" placeholder="Enter Password..." v-model="Pw" /></div>
+      <div class="buttonContainer"><input type="password" placeholder="Repeat Password..." v-model="repeatedPw" /></div>
       <div v-if="showPwErr" class="PwErr">
         Password and repeated password don't match!
       </div>
       <button class="changePwCancelBtn" @click="togglePassword(false)">
-          Cancel
+        Cancel
       </button>
-      <button class="changePwConfirmBtn"  @click="confirmPw()">
-          Confirm
+      <button class="changePwConfirmBtn" @click="confirmPw()">
+        Confirm
       </button>
     </div>
   </div>
@@ -57,8 +62,8 @@ export default {
       showPwErr: false
     }
   },
-  mounted(){
-    if(!checkAuth()) navigateTo("/Login")
+  mounted() {
+    if (!checkAuth()) navigateTo("/Login")
 
     this.Username = getCookies()["username"]
   },
@@ -72,27 +77,42 @@ export default {
       this.repeatedPw = ""
       this.showPwErr = false
     },
-    confirmPw() {
-      console.log('Confirmed new password')
-      if(this.Pw == this.repeatedPw){
-        this.togglePassword(false);
-        console.log('Confirmed');
-      }else{
-        this.showPwErr = true;
-      }
+    Logout(){
+        document.cookie = "username=" + this.Username + "; Max-Age=0"
+        navigateTo("/Login")
     },
-    confirmDelete(){
+    confirmPw() {
+      $fetch("/api/User/change", {
+        method: "POST",
+        body: {
+          password: this.Pw
+        },
+        headers: {
+          'Cookie': 'username=' + this.Username
+        }
+      }).then(res => {
+        console.log('Confirmed new password')
+        if (this.Pw == this.repeatedPw) {
+          this.togglePassword(false);
+          console.log('Confirmed');
+        } else {
+          this.showPwErr = true;
+        }
+      })
+
+    },
+    confirmDelete() {
       console.log('Confirmed deletion')
       $fetch("/api/User", {
-        method:"DELETE",
-        body:{
-          name:this.Username
+        method: "DELETE",
+        body: {
+          name: this.Username
         }
-      }).then(res =>{
-        if(res.deleted != undefined && res.deleted == true){
+      }).then(res => {
+        if (res.deleted != undefined && res.deleted == true) {
           document.cookie = ""
           navigateTo("/Login")
-        } else{
+        } else {
           this.toggleDelete(false)
           console.log("Something went Wrong :(")
         }
@@ -291,7 +311,7 @@ export default {
   border-radius: 25pt;
 }
 
-input{
+input {
   width: 194pt;
   height: 34pt;
   border-radius: 20pt;
@@ -305,7 +325,8 @@ input{
   padding-left: 10pt;
   padding-right: 10pt;
 }
-.PwErr{
+
+.PwErr {
   color: rgb(255, 70, 70);
   margin-top: 25pt;
 }

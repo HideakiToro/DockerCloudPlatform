@@ -6,7 +6,7 @@ public class MySQLManager
     static MySqlConnection conn;    //Anbindung an MySQL
     public static void connect()
     {
-        string connStr = "server=127.0.0.1;user=root;database=mysql;port=3306;password=pass";
+        string connStr = "server=127.0.0.1;user=root;database=mysql;port=3307;password=pass";
         conn = new MySqlConnection(connStr);
         try
         {

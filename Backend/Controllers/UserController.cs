@@ -69,7 +69,41 @@ namespace DockerWebAPI.Controllers
                 string name = data?.GetProperty("name").GetString();
                 string password = data?.GetProperty("password").GetString();
 
+            // select * from users where name = "{name}"
+            //.send comand prüfen, ob length = "0"
+            //wenn nicht null --> return StatusCode(403, new { status = "error", error = e.Message.ToString() });
+
                 MySQLManager.SendCommand($"INSERT INTO Users (name,password) VALUES (\"{name}\",\"{password}\")");
+
+                return Ok(new { message = "Accepted!" });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { status = "error", error = e.Message.ToString() });
+            }
+        }
+        [Route("/api/User/change")]
+        [HttpPost(Name = "ChangeUser")]
+        public async Task<dynamic> PostChange()
+        {
+            string user = Request.Cookies["username"] ?? "";
+            if(user == "")
+            {
+                return new Dictionary<string, int>();
+            }
+            while (!MySQLManager.isOk())
+            {
+                MySQLManager.connect();
+            }
+            string requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
+            try
+            {
+                var data = JsonSerializer.Deserialize<dynamic>(requestBody);
+                string password = data?.GetProperty("password").GetString();
+
+                Console.WriteLine( $"UPDATE Users SET password = \"{password}\" WHERE name = \"{user}\"");
+
+                MySQLManager.SendCommand($"UPDATE Users SET password = \"{password}\" WHERE name = \"{user}\"");
 
                 return Ok(new { message = "Accepted!" });
             }
