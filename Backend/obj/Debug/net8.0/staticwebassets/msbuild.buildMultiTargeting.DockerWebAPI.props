@@ -1,3 +1,3 @@
 ﻿<Project>
-  <Import Project="../build/DockerWebAPI.props" />
+  <Import Project="..\build\DockerWebAPI.props" />
 </Project>

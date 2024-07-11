@@ -560,24 +560,32 @@
     ]
   },
   "packageFolders": {
-    "/Users/okan/.nuget/packages/": {}
+    "C:\\Users\\hidea\\.nuget\\packages\\": {},
+    "C:\\Tools\\Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/okan/Developer/DockerCloudPlatform/Backend/DockerWebAPI.csproj",
+      "projectUniqueName": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
       "projectName": "DockerWebAPI",
-      "projectPath": "/Users/okan/Developer/DockerCloudPlatform/Backend/DockerWebAPI.csproj",
-      "packagesPath": "/Users/okan/.nuget/packages/",
-      "outputPath": "/Users/okan/Developer/DockerCloudPlatform/Backend/obj/",
+      "projectPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\DockerWebAPI.csproj",
+      "packagesPath": "C:\\Users\\hidea\\.nuget\\packages\\",
+      "outputPath": "C:\\Tools\\Git Projects\\DockerCloudPlatform\\Backend\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Tools\\Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/okan/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\hidea\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -629,7 +637,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

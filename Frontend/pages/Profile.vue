@@ -82,8 +82,8 @@ export default {
         navigateTo("/Login")
     },
     confirmPw() {
-      $fetch("/api/User/change", {
-        method: "POST",
+      $fetch("/api/User", {
+        method: "PUT",
         body: {
           password: this.Pw
         },

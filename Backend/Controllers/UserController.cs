@@ -82,9 +82,9 @@ namespace DockerWebAPI.Controllers
                 return StatusCode(500, new { status = "error", error = e.Message.ToString() });
             }
         }
-        [Route("/api/User/change")]
-        [HttpPost(Name = "ChangeUser")]
-        public async Task<dynamic> PostChange()
+
+        [HttpPut(Name = "ChangeUser")]
+        public async Task<dynamic> Put()
         {
             string user = Request.Cookies["username"] ?? "";
             if(user == "")
